@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "sndacs"
   gem.require_paths = ["lib"]
   gem.version       = Sndacs::VERSION
+  gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'rspec', '~> 2.0'
 end
