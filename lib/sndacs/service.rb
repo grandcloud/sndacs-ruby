@@ -4,6 +4,7 @@ require 'proxies'
 
 require 'sndacs/parser'
 require 'sndacs/buckets_extension'
+require 'sndacs/connection'
 
 module Sndacs
   class Service

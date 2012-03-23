@@ -29,7 +29,7 @@ module Sndacs
 
       signature = canonicalized_signature(options)
 
-      "AWS #{access_key_id}:#{signature}"
+      "SNDA #{access_key_id}:#{signature}"
     end
 
     # Generates temporary URL signature for given resource
@@ -209,7 +209,7 @@ module Sndacs
       # requests that don't address a bucket, do nothing. For more
       # information on virtual hosted-style requests, see Virtual
       # Hosting of Buckets.
-      bucket_name = host.sub(/\.?s3\.amazonaws\.com\Z/, "")
+      bucket_name = host.sub(/\.?storage\.grandcloud\.cn\Z/, "")
       string << "/#{bucket_name}" unless bucket_name.empty?
 
       # 3. Append the path part of the un-decoded HTTP Request-URI,
