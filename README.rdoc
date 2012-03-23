@@ -77,3 +77,4 @@ default.
 == Copyright
 
 Copyright (c) 2012 LI Daobing. See LICENSE[http://github.com/grandcloud/sndacs-ruby/raw/master/LICENSE] for details.
+
