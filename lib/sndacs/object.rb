@@ -145,23 +145,23 @@ module Sndacs
 
       headers = {}
 
-      headers[:x_amz_acl] = options[:acl] || acl || "public-read"
+      headers[:x_snda_acl] = options[:acl] || acl || "public-read"
       headers[:content_type] = options[:content_type] || content_type || "application/octet-stream"
       headers[:content_encoding] = options[:content_encoding] if options[:content_encoding]
       headers[:content_disposition] = options[:content_disposition] if options[:content_disposition]
       headers[:cache_control] = options[:cache_control] if options[:cache_control]
-      headers[:x_amz_copy_source] = full_key
-      headers[:x_amz_metadata_directive] = options[:replace] == false ? "COPY" : "REPLACE"
-      headers[:x_amz_copy_source_if_match] = options[:if_match] if options[:if_match]
-      headers[:x_amz_copy_source_if_none_match] = options[:if_none_match] if options[:if_none_match]
-      headers[:x_amz_copy_source_if_unmodified_since] = options[:if_modified_since] if options[:if_modified_since]
-      headers[:x_amz_copy_source_if_modified_since] = options[:if_unmodified_since] if options[:if_unmodified_since]
+      headers[:x_snda_copy_source] = full_key
+      headers[:x_snda_metadata_directive] = options[:replace] == false ? "COPY" : "REPLACE"
+      headers[:x_snda_copy_source_if_match] = options[:if_match] if options[:if_match]
+      headers[:x_snda_copy_source_if_none_match] = options[:if_none_match] if options[:if_none_match]
+      headers[:x_snda_copy_source_if_unmodified_since] = options[:if_modified_since] if options[:if_modified_since]
+      headers[:x_snda_copy_source_if_modified_since] = options[:if_unmodified_since] if options[:if_unmodified_since]
 
       response = bucket.send(:bucket_request, :put, :path => key, :headers => headers)
       object_attributes = parse_copy_object_result(response.body)
 
       object = Object.send(:new, bucket, object_attributes.merge(:key => key, :size => size))
-      object.acl = response["x-amz-acl"]
+      object.acl = response["x-snda-acl"]
       object.content_type = response["content-type"]
       object.content_encoding = response["content-encoding"]
       object.content_disposition = response["content-disposition"]
@@ -225,8 +225,8 @@ module Sndacs
 
     def dump_headers
       headers = {}
-      headers[:x_amz_acl] = @acl || "public-read"
-      headers[:x_amz_storage_class] = @storage_class || "STANDARD"
+      headers[:x_snda_acl] = @acl || "public-read"
+      headers[:x_snda_storage_class] = @storage_class || "STANDARD"
       headers[:content_type] = @content_type || "application/octet-stream"
       headers[:content_encoding] = @content_encoding if @content_encoding
       headers[:content_disposition] = @content_disposition if @content_disposition

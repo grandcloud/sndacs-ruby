@@ -10,32 +10,32 @@ sndacs library provides access to {SNDA Cloud Storage}[http://www.grandcloud.cn/
 
 === Initialize the service
 
-    require "s3"
-    service = S3::Service.new(:access_key_id => "...",
+    require "sndacs"
+    service = Sndacs::Service.new(:access_key_id => "...",
                               :secret_access_key => "...")
-    #=> #<S3::Service:...>
+    #=> #<Sndacs::Service:...>
 
 === List buckets
 
     service.buckets
-    #=> [#<S3::Bucket:first-bucket>,
-    #    #<S3::Bucket:second-bucket>]
+    #=> [#<Sndacs::Bucket:first-bucket>,
+    #    #<Sndacs::Bucket:second-bucket>]
 
 === Find bucket
 
     first_bucket = service.buckets.find("first-bucket")
-    #=> #<S3::Bucket:first-bucket>
+    #=> #<Sndacs::Bucket:first-bucket>
 
 === List objects in a bucket
 
     first_bucket.objects
-    #=> [#<S3::Object:/first-bucket/lenna.png>,
-    #    #<S3::Object:/first-bucket/lenna_mini.png>]
+    #=> [#<Sndacs::Object:/first-bucket/lenna.png>,
+    #    #<Sndacs::Object:/first-bucket/lenna_mini.png>]
 
 === Find object in a bucket
 
     object = first_bucket.objects.find("lenna.png")
-    #=> #<S3::Object:/first-bucket/lenna.png>
+    #=> #<Sndacs::Object:/first-bucket/lenna.png>
 
 === Access object metadata (cached from find)
 
@@ -55,7 +55,7 @@ sndacs library provides access to {SNDA Cloud Storage}[http://www.grandcloud.cn/
 === Create an object
 
     new_object = bucket.objects.build("bender.png")
-    #=> #<S3::Object:/synergy-staging/bender.png>
+    #=> #<Sndacs::Object:/synergy-staging/bender.png>
 
     new_object.content = open("bender.png")
 
