@@ -1,4 +1,6 @@
-module S3
+require 'rexml/document'
+
+module Sndacs
   module Parser
     include REXML
 

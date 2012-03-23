@@ -1,4 +1,4 @@
-module S3
+module Sndacs
 
   # Class responsible for generating signatures to requests.
   #

@@ -1,4 +1,11 @@
-module S3
+require 'net/http'
+
+require 'proxies'
+
+require 'sndacs/parser'
+require 'sndacs/buckets_extension'
+
+module Sndacs
   class Service
     include Parser
     include Proxies

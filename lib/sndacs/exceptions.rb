@@ -1,4 +1,4 @@
-module S3
+module Sndacs
   module Error
 
     # All responses with a code between 300 and 599 that contain an

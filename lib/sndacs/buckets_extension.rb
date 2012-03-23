@@ -1,4 +1,4 @@
-module S3
+module Sndacs
   module BucketsExtension
     # Builds new bucket with given name
     def build(name)

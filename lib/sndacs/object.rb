@@ -1,4 +1,4 @@
-module S3
+module Sndacs
 
   # Class responsible for handling objects stored in S3 buckets
   class Object

@@ -1,4 +1,4 @@
-module S3
+module Sndacs
   class Bucket
     include Parser
     include Proxies

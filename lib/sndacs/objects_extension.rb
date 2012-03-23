@@ -1,4 +1,4 @@
-module S3
+module Sndacs
   module ObjectsExtension
     # Builds the object in the bucket with given key
     def build(key)

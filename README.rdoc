@@ -1,12 +1,10 @@
-= S3
+= sndacs
 
-S3 library provides access to {Amazon's Simple Storage Service}[http://aws.amazon.com/s3/].
-
-It supports both: European and US buckets through the {REST API}[http://docs.amazonwebservices.com/AmazonS3/latest/API/APIRest.html].
+sndacs library provides access to {SNDA Cloud Storage}[http://www.grandcloud.cn/product/ecs].
 
 == Installation
 
-    gem install s3
+    gem install sndacs
 
 == Usage
 
