@@ -235,7 +235,7 @@ module Sndacs
     end
 
     def parse_headers(response)
-      @metadata = response.to_hash.select { |k, v| k.to_s.start_with?("x-amz-meta") }
+      @metadata = response.to_hash.select { |k, v| k.to_s.start_with?("x-snda-meta") }
       self.etag = response["etag"] if response.key?("etag")
       self.content_type = response["content-type"] if response.key?("content-type")
       self.content_disposition = response["content-disposition"] if response.key?("content-disposition")
@@ -246,7 +246,7 @@ module Sndacs
         self.size = response["content-range"].sub(/[^\/]+\//, "").to_i
       else
         self.size = response["content-length"]
-        self.content = response.body
+        self.content = response.body unless response.body.nil?
       end
     end
   end
