@@ -1,4 +1,2 @@
-source 'http://rubygems.org'
-
-# Specify your gem's dependencies in sndacs.gemspec
+source "http://rubygems.org"
 gemspec
