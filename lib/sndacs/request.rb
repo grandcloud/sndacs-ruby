@@ -1,4 +1,5 @@
 module Sndacs
+
   # Class responsible for sending chunked requests
   # properly. Net::HTTPGenericRequest has hardcoded chunk_size, so we
   # inherit the class and override chunk_size.
@@ -28,4 +29,5 @@ module Sndacs
       end
     end
   end
+
 end

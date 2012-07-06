@@ -1,4 +1,5 @@
 module Sndacs
+
   module BucketsExtension
     # Builds new bucket with given name
     def build(name)
@@ -23,4 +24,5 @@ module Sndacs
       proxy_target.each { |bucket| bucket.destroy(force) }
     end
   end
+
 end

@@ -3,15 +3,15 @@ require "test_helper"
 
 class ObjectTest < Test::Unit::TestCase
   def setup
-    @service = S3::Service.new(
+    @service = Sndacs::Service.new(
       :access_key_id => "1234",
       :secret_access_key => "1337"
     )
-    @bucket_images = S3::Bucket.send(:new, @service, "images")
-    @object_lena = S3::Object.send(:new, @bucket_images, :key => "Lena.png")
+    @bucket_images = Sndacs::Bucket.send(:new, @service, "images")
+    @object_lena = Sndacs::Object.send(:new, @bucket_images, :key => "Lena.png")
     @object_lena.content = "test"
-    @object_carmen = S3::Object.send(:new, @bucket_images, :key => "Carmen.png")
-    @object_mac = S3::Object.send(:new, @bucket_images, :key => "Mac.png", :cache_control => "max-age=315360000")
+    @object_carmen = Sndacs::Object.send(:new, @bucket_images, :key => "Carmen.png")
+    @object_mac = Sndacs::Object.send(:new, @bucket_images, :key => "Mac.png", :cache_control => "max-age=315360000")
     @object_mac.content = "test2"
 
     @response_binary = Net::HTTPOK.new("1.1", "200", "OK")
@@ -33,14 +33,14 @@ class ObjectTest < Test::Unit::TestCase
   end
 
   test "initializing" do
-    assert_raise ArgumentError do S3::Object.send(:new, nil, :key => "") end # should not allow empty key
-    assert_raise ArgumentError do S3::Object.send(:new, nil, :key => "//") end # should not allow key with double slash
+    assert_raise ArgumentError do Sndacs::Object.send(:new, nil, :key => "") end # should not allow empty key
+    assert_raise ArgumentError do Sndacs::Object.send(:new, nil, :key => "//") end # should not allow key with double slash
 
     assert_nothing_raised do
-      S3::Object.send(:new, nil, :key => "Lena.png")
-      S3::Object.send(:new, nil, :key => "Lena playboy.png")
-      S3::Object.send(:new, nil, :key => "Lena Söderberg.png")
-      S3::Object.send(:new, nil, :key => "/images/pictures/test images/Lena not full.png")
+      Sndacs::Object.send(:new, nil, :key => "Lena.png")
+      Sndacs::Object.send(:new, nil, :key => "Lena playboy.png")
+      Sndacs::Object.send(:new, nil, :key => "Lena Söderberg.png")
+      Sndacs::Object.send(:new, nil, :key => "/images/pictures/test images/Lena not full.png")
     end
   end
 
@@ -57,42 +57,42 @@ class ObjectTest < Test::Unit::TestCase
   end
 
   test "url" do
-    bucket1 = S3::Bucket.send(:new, @service, "images")
+    bucket1 = Sndacs::Bucket.send(:new, @service, "images")
 
-    object11 = S3::Object.send(:new, bucket1, :key => "Lena.png")
+    object11 = Sndacs::Object.send(:new, bucket1, :key => "Lena.png")
     expected = "http://images.s3.amazonaws.com/Lena.png"
     actual = object11.url
     assert_equal expected, actual
 
-    object12 = S3::Object.send(:new, bucket1, :key => "Lena Söderberg.png")
+    object12 = Sndacs::Object.send(:new, bucket1, :key => "Lena Söderberg.png")
     expected = "http://images.s3.amazonaws.com/Lena%20S%C3%B6derberg.png"
     actual = object12.url
     assert_equal expected, actual
 
-    bucket2 = S3::Bucket.send(:new, @service, "images_new")
+    bucket2 = Sndacs::Bucket.send(:new, @service, "images_new")
 
-    object21 = S3::Object.send(:new, bucket2, :key => "Lena.png")
+    object21 = Sndacs::Object.send(:new, bucket2, :key => "Lena.png")
     expected = "http://s3.amazonaws.com/images_new/Lena.png"
     actual = object21.url
     assert_equal expected, actual
   end
 
   test "cname url" do
-    bucket1 = S3::Bucket.send(:new, @service, "images.example.com")
+    bucket1 = Sndacs::Bucket.send(:new, @service, "images.example.com")
 
-    object11 = S3::Object.send(:new, bucket1, :key => "Lena.png")
+    object11 = Sndacs::Object.send(:new, bucket1, :key => "Lena.png")
     expected = "http://images.example.com/Lena.png"
     actual = object11.cname_url
     assert_equal expected, actual
 
-    object12 = S3::Object.send(:new, bucket1, :key => "Lena Söderberg.png")
+    object12 = Sndacs::Object.send(:new, bucket1, :key => "Lena Söderberg.png")
     expected = "http://images.example.com/Lena%20S%C3%B6derberg.png"
     actual = object12.cname_url
     assert_equal expected, actual
 
-    bucket2 = S3::Bucket.send(:new, @service, "images_new")
+    bucket2 = Sndacs::Bucket.send(:new, @service, "images_new")
 
-    object21 = S3::Object.send(:new, bucket2, :key => "Lena.png")
+    object21 = Sndacs::Object.send(:new, bucket2, :key => "Lena.png")
     expected = nil
     actual = object21.cname_url
     assert_equal expected, actual
@@ -145,7 +145,7 @@ class ObjectTest < Test::Unit::TestCase
     @object_lena.expects(:retrieve).returns(true)
     assert @object_lena.exists?
 
-    @object_carmen.expects(:retrieve).raises(S3::Error::NoSuchKey.new(nil, nil))
+    @object_carmen.expects(:retrieve).raises(Sndacs::Error::NoSuchKey.new(nil, nil))
     assert ! @object_carmen.exists?
   end
 

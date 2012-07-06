@@ -2,11 +2,11 @@ module Sndacs
 
   # Class responsible for generating signatures to requests.
   #
-  # Implements algorithm defined by Amazon Web Services to sign
+  # Implements algorithm defined by GrandCloud Web Services to sign
   # request with secret private credentials
   #
   # === See
-  # http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTAuthentication.html
+  # https://cs-console.grandcloud.cn/public/docs/GrandCloud_Storage_Developer_Guide.pdf
 
   class Signature
 
@@ -83,8 +83,8 @@ module Sndacs
       expires = options[:expires_at].to_i
       signature = generate_temporary_url_signature(options)
 
-      url = "http://#{S3::HOST}/#{bucket}/#{resource}"
-      url << "?AWSAccessKeyId=#{access_key}"
+      url = "http://#{Sndacs::HOST}/#{bucket}/#{resource}"
+      url << "?SNDAAccessKeyId=#{access_key}"
       url << "&Expires=#{expires}"
       url << "&Signature=#{signature}"
     end
@@ -240,4 +240,5 @@ module Sndacs
       string
     end
   end
+
 end

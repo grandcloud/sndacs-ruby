@@ -22,6 +22,6 @@ require "sndacs/signature"
 require "sndacs/version"
 
 module Sndacs
-  # Default (and only) host serving S3 stuff
+  # Default (and only) host serving grand cloud stuff
   HOST = "storage.grandcloud.cn"
 end

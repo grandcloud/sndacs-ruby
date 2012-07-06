@@ -1,11 +1,13 @@
 require 'rexml/document'
 
 module Sndacs
+
   module Parser
     include REXML
 
     def rexml_document(xml)
       xml.force_encoding(::Encoding::UTF_8) if xml.respond_to? :force_encoding
+
       Document.new(xml)
     end
 
@@ -51,4 +53,5 @@ module Sndacs
       rexml_document(xml).elements["ListBucketResult/IsTruncated"].text =='true'
     end
   end
+
 end

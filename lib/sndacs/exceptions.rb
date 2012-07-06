@@ -1,4 +1,5 @@
 module Sndacs
+
   module Error
 
     # All responses with a code between 300 and 599 that contain an
@@ -12,7 +13,7 @@ module Sndacs
     class ResponseError < StandardError
       attr_reader :response
 
-      # Creates new S3::ResponseError.
+      # Creates new Sndacs::ResponseError.
       #
       # ==== Parameters
       # * <tt>message</tt> - what went wrong
@@ -23,7 +24,7 @@ module Sndacs
       end
 
       # Factory for all other Exception classes in module, each for
-      # every error response available from AmazonAWS
+      # every error response available from SNDA Cloud Storage
       #
       # ==== Parameters
       # * <tt>code</tt> - Code name of exception
@@ -32,7 +33,7 @@ module Sndacs
       # Descendant of ResponseError suitable for that exception code
       # or ResponseError class if no class found
       def self.exception(code)
-        S3::Error.const_get(code)
+        Sndacs::Error.const_get(code)
       rescue NameError
         ResponseError
       end
@@ -107,4 +108,5 @@ module Sndacs
     class UnresolvableGrantByEmailAddress < ResponseError; end
     class UserKeyMustBeSpecified < ResponseError; end
   end
+
 end

@@ -1,6 +1,6 @@
 module Sndacs
 
-  # Class responsible for handling objects stored in S3 buckets
+  # Class responsible for handling objects stored in CS buckets
   class Object
     include Parser
     extend Forwardable
@@ -62,7 +62,7 @@ module Sndacs
 
     # Retrieves the object from the server, returns true if the object
     # exists or false otherwise. Uses #retrieve method, but catches
-    # S3::Error::NoSuchKey exception and returns false when it happens
+    # Sndacs::Error::NoSuchKey exception and returns false when it happens
     def exists?
       retrieve
       true
@@ -89,7 +89,7 @@ module Sndacs
     # ==== Options
     # * <tt>:key</tt> - New key to store object in
     # * <tt>:bucket</tt> - New bucket to store object in (instance of
-    #   S3::Bucket)
+    #   Sndacs::Bucket)
     # * <tt>:acl</tt> - ACL of the copied object (default:
     #   "public-read")
     # * <tt>:content_type</tt> - Content type of the copied object
@@ -105,7 +105,7 @@ module Sndacs
     end
 
     # Returns Object's URL using protocol specified in service,
-    # e.g. <tt>http://domain.com.s3.amazonaws.com/key/with/path.extension</tt>
+    # e.g. <tt>http://domain.com.storage.grandcloud.cn/key/with/path.extension</tt>
     def url
       URI.escape("#{protocol}#{host}/#{path_prefix}#{key}")
     end
@@ -118,10 +118,10 @@ module Sndacs
                                                              :expires_at => expires_at,
                                                              :secret_access_key => secret_access_key)
 
-      "#{url}?AWSAccessKeyId=#{self.bucket.service.access_key_id}&Expires=#{expires_at.to_i.to_s}&Signature=#{signature}"
+      "#{url}?SNDAAccessKeyId=#{self.bucket.service.access_key_id}&Expires=#{expires_at.to_i.to_s}&Signature=#{signature}"
     end
 
-    # Returns Object's CNAME URL (without <tt>s3.amazonaws.com</tt>
+    # Returns Object's CNAME URL (without <tt>storage.grandcloud.cn</tt>
     # suffix) using protocol specified in Service,
     # e.g. <tt>http://domain.com/key/with/path.extension</tt>. (you
     # have to set the CNAME in your DNS before using the CNAME URL
@@ -250,4 +250,5 @@ module Sndacs
       end
     end
   end
+
 end

@@ -1,4 +1,5 @@
 module Sndacs
+
   module ObjectsExtension
     # Builds the object in the bucket with given key
     def build(key)
@@ -34,4 +35,5 @@ module Sndacs
       proxy_target.each { |object| object.destroy }
     end
   end
+
 end

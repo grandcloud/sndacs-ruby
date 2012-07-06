@@ -14,7 +14,7 @@ class ServiceTest < Test::Unit::TestCase
     <?xml version="1.0" encoding="UTF-8"?>\n<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"> <Name>data.synergypeople.net</Name> <Prefix></Prefix> <Marker></Marker> <MaxKeys>1000</MaxKeys> <IsTruncated>false</IsTruncated> </ListBucketResult>
     EOBucketexists
 
-    @service_empty_buckets_list = S3::Service.new(
+    @service_empty_buckets_list = Sndacs::Service.new(
       :access_key_id =>  "12345678901234567890",
       :secret_access_key =>  "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDF"
     )
@@ -22,7 +22,7 @@ class ServiceTest < Test::Unit::TestCase
     @service_empty_buckets_list.stubs(:service_request).returns(@response_empty_buckets_list)
     @response_empty_buckets_list.stubs(:body).returns(@buckets_empty_list_body)
 
-    @service_buckets_list = S3::Service.new(
+    @service_buckets_list = Sndacs::Service.new(
       :access_key_id =>  "12345678901234567890",
       :secret_access_key =>  "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDF"
     )
@@ -30,7 +30,7 @@ class ServiceTest < Test::Unit::TestCase
     @service_buckets_list.stubs(:service_request).returns(@response_buckets_list)
     @response_buckets_list.stubs(:body).returns(@buckets_list_body)
 
-    @service_bucket_exists = S3::Service.new(
+    @service_bucket_exists = Sndacs::Service.new(
       :access_key_id =>  "12345678901234567890",
       :secret_access_key =>  "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDF"
     )
@@ -38,12 +38,12 @@ class ServiceTest < Test::Unit::TestCase
     @service_bucket_exists.stubs(:service_request).returns(@response_bucket_exists)
     @response_bucket_exists.stubs(:body).returns(@bucket_exists)
 
-    @service_bucket_not_exists = S3::Service.new(
+    @service_bucket_not_exists = Sndacs::Service.new(
       :access_key_id =>  "12345678901234567890",
       :secret_access_key =>  "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDF"
     )
     @response_bucket_not_exists = Net::HTTPNotFound.new("1.1", "404", "Not Found")
-    @service_bucket_not_exists.stubs(:service_request).raises(S3::Error::NoSuchBucket.new(404, @response_bucket_not_exists))
+    @service_bucket_not_exists.stubs(:service_request).raises(Sndacs::Error::NoSuchBucket.new(404, @response_bucket_not_exists))
     @response_bucket_not_exists.stubs(:body).returns(@bucket_not_exists)
 
     @buckets_empty_list = []
@@ -52,8 +52,8 @@ class ServiceTest < Test::Unit::TestCase
     EOEmptyBuckets
 
     @buckets_list = [
-      S3::Bucket.send(:new, @service_buckets_list, "data.example.com"),
-      S3::Bucket.send(:new, @service_buckets_list, "images")
+      Sndacs::Bucket.send(:new, @service_buckets_list, "data.example.com"),
+      Sndacs::Bucket.send(:new, @service_buckets_list, "images")
     ]
   end
 
@@ -76,7 +76,7 @@ class ServiceTest < Test::Unit::TestCase
 
     expected = "bucket_name"
     actual = @service_empty_buckets_list.buckets.build("bucket_name")
-    assert_kind_of S3::Bucket, actual
+    assert_kind_of Sndacs::Bucket, actual
     assert_equal expected, actual.name
   end
 
@@ -88,7 +88,7 @@ class ServiceTest < Test::Unit::TestCase
   end
 
   test "buckets find first fail" do
-    assert_raise S3::Error::NoSuchBucket do
+    assert_raise Sndacs::Error::NoSuchBucket do
       @service_bucket_not_exists.buckets.find_first("data2.example.com")
     end
   end

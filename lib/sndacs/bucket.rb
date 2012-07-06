@@ -1,4 +1,5 @@
 module Sndacs
+
   class Bucket
     include Parser
     include Proxies
@@ -10,7 +11,7 @@ module Sndacs
     private_class_method :new
 
     # Retrieves the bucket information from the server. Raises an
-    # S3::Error exception if the bucket doesn't exist or you don't
+    # Sndacs::Error exception if the bucket doesn't exist or you don't
     # have access to it, etc.
     def retrieve
       bucket_headers
@@ -30,7 +31,7 @@ module Sndacs
       self.name == other.name and self.service == other.service
     end
 
-    # Similar to retrieve, but catches S3::Error::NoSuchBucket
+    # Similar to retrieve, but catches Sndacs::Error::NoSuchBucket
     # exceptions and returns false instead.
     def exists?
       retrieve
@@ -39,7 +40,7 @@ module Sndacs
       false
     end
 
-    # Destroys given bucket. Raises an S3::Error::BucketNotEmpty
+    # Destroys given bucket. Raises an Sndacs::Error::BucketNotEmpty
     # exception if the bucket is not empty. You can destroy non-empty
     # bucket passing true (to force destroy)
     def destroy(force = false)
@@ -69,7 +70,7 @@ module Sndacs
 
     # Returns true if the name of the bucket can be used like +VHOST+
     # name. If the bucket contains characters like underscore it can't
-    # be used as +VHOST+ (e.g. <tt>bucket_name.s3.amazonaws.com</tt>)
+    # be used as +VHOST+ (e.g. <tt>bucket_name.storage.grandcloud.cn</tt>)
     def vhost?
       #"#@name.#{HOST}" =~ /\A#{URI::REGEXP::PATTERN::HOSTNAME}\Z/
       false
@@ -176,4 +177,5 @@ module Sndacs
       name =~ /\A[a-z0-9][a-z0-9\._-]{2,254}\Z/i and name !~ /\A#{URI::REGEXP::PATTERN::IPV4ADDR}\Z/
     end
   end
+
 end

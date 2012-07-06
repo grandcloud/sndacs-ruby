@@ -1,6 +1,6 @@
 module Sndacs
 
-  # Class responsible for handling connections to amazon hosts
+  # Class responsible for handling connections to grandcloud hosts
   class Connection
     include Parser
 
@@ -43,7 +43,7 @@ module Sndacs
     #
     # ==== Options:
     # * <tt>:host</tt> - Hostname to connecto to, defaults
-    #   to <tt>s3.amazonaws.com</tt>
+    #   to <tt>storage.grandcloud.cn</tt>
     # * <tt>:path</tt> - path to send request to (REQUIRED)
     # * <tt>:body</tt> - Request body, only meaningful for
     #   <tt>:put</tt> request
@@ -222,4 +222,5 @@ module Sndacs
       response
     end
   end
+
 end

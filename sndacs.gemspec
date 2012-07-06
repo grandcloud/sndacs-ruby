@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-# Load version requiring the canonical "s3/version", otherwise Ruby will think
-# is a different file and complaint about a double declaration of S3::VERSION.
+# Load version requiring the canonical "sndacs/version", otherwise Ruby will think
+# is a different file and complaint about a double declaration of Sndacs::VERSION.
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "sndacs/version"
 

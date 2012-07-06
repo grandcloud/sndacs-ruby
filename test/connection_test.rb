@@ -2,7 +2,7 @@ require "test_helper"
 
 class ConnectionTest < Test::Unit::TestCase
   def setup
-    @connection = S3::Connection.new(
+    @connection = Sndacs::Connection.new(
       :access_key_id =>  "12345678901234567890",
       :secret_access_key =>  "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDF"
     )
@@ -39,7 +39,7 @@ class ConnectionTest < Test::Unit::TestCase
     @http_request.stubs(:start).returns(@response_not_found)
     @response_not_found.stubs(:body).returns(response_body)
 
-    assert_raise S3::Error::NoSuchBucket do
+    assert_raise Sndacs::Error::NoSuchBucket do
       response = @connection.request(
         :get,
         :host => "data.example.com.s3.amazonaws.com",
@@ -51,7 +51,7 @@ class ConnectionTest < Test::Unit::TestCase
   test "handle response throws standard exception when error" do
     @http_request.stubs(:start).returns(@response_error)
     @response_error.stubs(:body)
-    assert_raise S3::Error::ResponseError do
+    assert_raise Sndacs::Error::ResponseError do
       response = @connection.request(
         :get,
         :host => "data.example.com.s3.amazonaws.com",
@@ -60,7 +60,7 @@ class ConnectionTest < Test::Unit::TestCase
     end
 
     @response_error.stubs(:body).returns("")
-    assert_raise S3::Error::ResponseError do
+    assert_raise Sndacs::Error::ResponseError do
       response = @connection.request(
         :get,
         :host => "data.example.com.s3.amazonaws.com",
@@ -71,24 +71,24 @@ class ConnectionTest < Test::Unit::TestCase
 
   test "parse params empty" do
     expected = ""
-    actual = S3::Connection.parse_params({})
+    actual = Sndacs::Connection.parse_params({})
     assert_equal expected, actual
   end
 
   test "parse params only interesting params" do
     expected = ""
-    actual = S3::Connection.parse_params(:param1 => "1", :maxkeys => "2")
+    actual = Sndacs::Connection.parse_params(:param1 => "1", :maxkeys => "2")
     assert_equal expected, actual
   end
 
   test "parse params remove underscore" do
     expected = "max-keys=100"
-    actual = S3::Connection.parse_params(:max_keys => 100)
+    actual = Sndacs::Connection.parse_params(:max_keys => 100)
     assert_equal expected, actual
   end
 
   test "parse params with and without values" do
-    params = S3::Connection.parse_params(:max_keys => 100, :prefix => nil)
+    params = Sndacs::Connection.parse_params(:max_keys => 100, :prefix => nil)
 
     splitted_params = params.split("&")
     assert_equal 2, splitted_params.length
@@ -98,13 +98,13 @@ class ConnectionTest < Test::Unit::TestCase
 
   test "headers empty" do
     expected = {}
-    actual = S3::Connection.parse_headers({})
+    actual = Sndacs::Connection.parse_headers({})
     assert_equal expected, actual
   end
 
   test "parse only interesting headers" do
     expected = {}
-    actual = S3::Connection.parse_headers(
+    actual = Sndacs::Connection.parse_headers(
       :accept => "text/*, text/html, text/html;level=1, */*",
       :accept_charset => "iso-8859-2, unicode-1-1;q=0.8"
     )
@@ -123,7 +123,7 @@ class ConnectionTest < Test::Unit::TestCase
       "content-disposition" => nil,
       "content-encoding" => nil
     }
-    actual = S3::Connection.parse_headers(
+    actual = Sndacs::Connection.parse_headers(
       :content_type => nil,
       :x_amz_acl => nil,
       :x_amz_storage_class => nil,
@@ -149,7 +149,7 @@ class ConnectionTest < Test::Unit::TestCase
       "content-disposition" => "inline",
       "content-encoding" => "gzip"
     }
-    actual = S3::Connection.parse_headers(
+    actual = Sndacs::Connection.parse_headers(
       :content_type => "text/html",
       :x_amz_acl => "public-read",
       :x_amz_storage_class => "STANDARD",
@@ -167,7 +167,7 @@ class ConnectionTest < Test::Unit::TestCase
     expected = {
       "range" => "bytes=0-100"
     }
-    actual = S3::Connection.parse_headers(
+    actual = Sndacs::Connection.parse_headers(
       :range => 0..100
     )
     assert_equal expected, actual

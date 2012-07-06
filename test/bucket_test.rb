@@ -2,8 +2,8 @@ require "test_helper"
 
 class BucketTest < Test::Unit::TestCase
   def setup
-    @bucket_vhost = S3::Bucket.send(:new, nil, "Data-Bucket")
-    @bucket_path = S3::Bucket.send(:new, nil, "Data_Bucket")
+    @bucket_vhost = Sndacs::Bucket.send(:new, nil, "Data-Bucket")
+    @bucket_path = Sndacs::Bucket.send(:new, nil, "Data_Bucket")
     @bucket = @bucket_vhost
 
     @bucket_location = "EU"
@@ -30,8 +30,8 @@ class BucketTest < Test::Unit::TestCase
 
     @objects_list_empty = []
     @objects_list = [
-      S3::Object.send(:new, @bucket, :key => "obj1"),
-      S3::Object.send(:new, @bucket, :key => "obj2")
+      Sndacs::Object.send(:new, @bucket, :key => "obj1"),
+      Sndacs::Object.send(:new, @bucket, :key => "obj2")
     ]
 
     @response_objects_list_empty_body = <<-EOEmpty
@@ -50,18 +50,18 @@ class BucketTest < Test::Unit::TestCase
   end
 
   test "name valid" do
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, "") end # should not be valid with empty name
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, "10.0.0.1") end # should not be valid with IP as name
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, "as") end # should not be valid with name shorter than 3 characters
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, "a" * 256) end # should not be valid with name longer than 255 characters
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, ".asdf") end # should not allow special characters as first character
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, "-asdf") end # should not allow special characters as first character
-    assert_raise ArgumentError do S3::Bucket.send(:new, nil, "_asdf") end # should not allow special characters as first character
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, "") end # should not be valid with empty name
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, "10.0.0.1") end # should not be valid with IP as name
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, "as") end # should not be valid with name shorter than 3 characters
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, "a" * 256) end # should not be valid with name longer than 255 characters
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, ".asdf") end # should not allow special characters as first character
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, "-asdf") end # should not allow special characters as first character
+    assert_raise ArgumentError do Sndacs::Bucket.send(:new, nil, "_asdf") end # should not allow special characters as first character
 
     assert_nothing_raised do
-      S3::Bucket.send(:new, nil, "a-a-")
-      S3::Bucket.send(:new, nil, "a.a.")
-      S3::Bucket.send(:new, nil, "a_a_")
+      Sndacs::Bucket.send(:new, nil, "a-a-")
+      Sndacs::Bucket.send(:new, nil, "a.a.")
+      Sndacs::Bucket.send(:new, nil, "a_a_")
     end
   end
 
@@ -94,7 +94,7 @@ class BucketTest < Test::Unit::TestCase
     @bucket.expects(:retrieve).returns(@bucket_vhost)
     assert @bucket.exists?
 
-    @bucket.expects(:retrieve).raises(S3::Error::NoSuchBucket.new(nil, nil))
+    @bucket.expects(:retrieve).raises(Sndacs::Error::NoSuchBucket.new(nil, nil))
     assert ! @bucket.exists?
   end
 
@@ -117,13 +117,13 @@ class BucketTest < Test::Unit::TestCase
   end
 
   test "save failure owned by you" do
-    @bucket.expects(:bucket_request).with(:put, { :headers => {} }).raises(S3::Error::BucketAlreadyOwnedByYou.new(409, @response_owned_by_you))
-    assert_raise S3::Error::BucketAlreadyOwnedByYou do
+    @bucket.expects(:bucket_request).with(:put, { :headers => {} }).raises(Sndacs::Error::BucketAlreadyOwnedByYou.new(409, @response_owned_by_you))
+    assert_raise Sndacs::Error::BucketAlreadyOwnedByYou do
       @bucket.save
     end
 
-    @bucket.expects(:bucket_request).with(:put, { :headers => {} }).raises(S3::Error::BucketAlreadyExists.new(409, @response_already_exists))
-    assert_raise S3::Error::BucketAlreadyExists do
+    @bucket.expects(:bucket_request).with(:put, { :headers => {} }).raises(Sndacs::Error::BucketAlreadyExists.new(409, @response_already_exists))
+    assert_raise Sndacs::Error::BucketAlreadyExists do
       @bucket.save
     end
   end
@@ -167,13 +167,13 @@ class BucketTest < Test::Unit::TestCase
 
     expected = "object_name"
     actual = @bucket.objects.build("object_name")
-    assert_kind_of S3::Object, actual
+    assert_kind_of Sndacs::Object, actual
     assert_equal expected, actual.key
   end
 
   test "objects find first" do
     assert_nothing_raised do
-      S3::Object.any_instance.stubs(:retrieve).returns(S3::Object.send(:new, nil, :key => "obj2"))
+      Sndacs::Object.any_instance.stubs(:retrieve).returns(Sndacs::Object.send(:new, nil, :key => "obj2"))
       expected = "obj2"
       actual = @bucket.objects.find_first("obj2")
       assert_equal "obj2", actual.key
@@ -181,8 +181,8 @@ class BucketTest < Test::Unit::TestCase
   end
 
   test "objects find first fail" do
-    assert_raise S3::Error::NoSuchKey do
-      S3::Object.any_instance.stubs(:retrieve).raises(S3::Error::NoSuchKey.new(404, nil))
+    assert_raise Sndacs::Error::NoSuchKey do
+      Sndacs::Object.any_instance.stubs(:retrieve).raises(Sndacs::Error::NoSuchKey.new(404, nil))
       @bucket.objects.find_first("obj3")
     end
   end

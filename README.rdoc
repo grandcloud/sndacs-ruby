@@ -14,7 +14,7 @@ bases on the s3 gem: https://github.com/qoobaa/s3
 
     require "sndacs"
     service = Sndacs::Service.new(:access_key_id => "...",
-                              :secret_access_key => "...")
+                                  :secret_access_key => "...")
     #=> #<Sndacs::Service:...>
 
 === List buckets
@@ -64,7 +64,7 @@ bases on the s3 gem: https://github.com/qoobaa/s3
     new_object.save
     #=> true
 
-Please note that new objects are created with "public-read" ACL by
+Please note that new objects are created with "private" ACL by
 default.
 
 == See also
