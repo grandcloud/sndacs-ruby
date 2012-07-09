@@ -83,6 +83,7 @@ module Sndacs
         else
           request.body = body
         end
+
         request.content_length = body.respond_to?(:lstat) ? body.stat.size : body.size
       end
 
@@ -105,6 +106,7 @@ module Sndacs
       params.each do |key, value|
         if interesting_keys.include?(key)
           parsed_key = key.to_s.gsub("_", "-")
+
           case value
           when nil
             result << parsed_key
@@ -113,6 +115,7 @@ module Sndacs
           end
         end
       end
+
       result.join("&")
     end
 
@@ -144,14 +147,17 @@ module Sndacs
           if interesting_keys.include?(key)
             parsed_key = key.to_s.gsub("_", "-")
             parsed_value = value
+
             case value
             when Range
               parsed_value = "bytes=#{value.first}-#{value.last}"
             end
+
             parsed_headers[parsed_key] = parsed_value
           end
         end
       end
+
       parsed_headers
     end
 
@@ -219,6 +225,7 @@ module Sndacs
       else
         raise(ConnectionError.new(response, "Unknown response code: #{response.code}"))
       end
+
       response
     end
   end

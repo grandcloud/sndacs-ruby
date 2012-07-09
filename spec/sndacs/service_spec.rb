@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'sndacs/service'
 
 module Sndacs
+
   describe Service do
     context "#buckets" do
       context "when buckets is empty" do
@@ -19,7 +20,17 @@ module Sndacs
           EOEmptyBuckets
           @service_empty_buckets_list.buckets.should == []
         end
+        
+        it "should return nil when try to fetch a bucket" do
+          @service = Sndacs::Service.new(
+            :access_key_id => '8A9N7XR0RTRNV0NQYWKP14V44',
+            :secret_access_key => 'MWU0YjQ5NmUtNTJiYy00NDkxLTgyYmEtM2QyYjE5ZDA5YjAw'
+          )
+          
+          p @service.buckets
+        end
       end
     end
   end
+
 end
