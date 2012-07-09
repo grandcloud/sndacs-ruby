@@ -34,7 +34,7 @@ module Sndacs
   Config.proxy = nil
   Config.timeout = 60
   Config.use_ssl = false
-  Config.chunk_size = 104856
+  Config.chunk_size = 1048576
   Config.debug = false
 
 end
