@@ -1,3 +1,6 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
 require "base64"
 require "cgi"
 require "digest/md5"
@@ -13,6 +16,7 @@ require "sndacs/objects_extension"
 require "sndacs/buckets_extension"
 require "sndacs/parser"
 require "sndacs/bucket"
+require "sndacs/config"
 require "sndacs/connection"
 require "sndacs/exceptions"
 require "sndacs/object"
@@ -22,6 +26,15 @@ require "sndacs/signature"
 require "sndacs/version"
 
 module Sndacs
-  # Default (and only) host serving grand cloud stuff
-  HOST = "storage.grandcloud.cn"
+
+  # Default configurations, see Sndacs::Config for more info
+  Config.access_key_id = ''
+  Config.secret_access_key = ''
+  Config.host = 'storage.grandcloud.cn'
+  Config.proxy = nil
+  Config.timeout = 60
+  Config.use_ssl = false
+  Config.chunk_size = 104856
+  Config.debug = false
+
 end
