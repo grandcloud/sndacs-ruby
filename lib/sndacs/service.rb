@@ -31,7 +31,7 @@ module Sndacs
     #   (false by default)
     # * <tt>:timeout</tt> - Timeout to use by the Net::HTTP object
     #   (60 by default)
-    def initialize(options)
+    def initialize(options = {})
       @access_key_id = options.fetch(:access_key_id, Sndacs::Config.access_key_id)
       @secret_access_key = options.fetch(:secret_access_key, Sndacs::Config.secret_access_key)
       @proxy = options.fetch(:proxy, Sndacs::Config.proxy)

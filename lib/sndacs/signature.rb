@@ -83,7 +83,7 @@ module Sndacs
       expires = options[:expires_at].to_i
       signature = generate_temporary_url_signature(options)
 
-      url = "http://#{Sndacs::HOST}/#{bucket}/#{resource}"
+      url = "http://#{Sndacs::Config.host}/#{bucket}/#{resource}"
       url << "?SNDAAccessKeyId=#{access_key}"
       url << "&Expires=#{expires}"
       url << "&Signature=#{signature}"
