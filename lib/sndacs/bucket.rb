@@ -103,7 +103,7 @@ module Sndacs
       "#<#{self.class}:#{name}>"
     end
 
-    private
+  private
 
     attr_writer :service
 

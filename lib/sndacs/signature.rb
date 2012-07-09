@@ -89,7 +89,7 @@ module Sndacs
       url << "&Signature=#{signature}"
     end
 
-    private
+  private
 
     def self.canonicalized_signature(options)
       headers = options[:headers] || {}

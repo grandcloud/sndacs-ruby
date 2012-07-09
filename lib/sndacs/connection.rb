@@ -165,7 +165,7 @@ module Sndacs
       parsed_headers
     end
 
-    private
+  private
 
     def port
       use_ssl ? 443 : 80

@@ -10,7 +10,7 @@ module Sndacs
       super(m, reqbody, resbody, path, initheader)
     end
 
-    private
+  private
 
     def send_request_with_body_stream(sock, ver, path, f)
       unless content_length() or chunked?

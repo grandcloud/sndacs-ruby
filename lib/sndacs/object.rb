@@ -134,7 +134,7 @@ module Sndacs
       "#<#{self.class}:/#{name}/#{key}>"
     end
 
-    private
+  private
 
     attr_writer :last_modified, :etag, :size, :original_key, :bucket
 
