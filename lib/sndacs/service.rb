@@ -32,14 +32,14 @@ module Sndacs
     # * <tt>:timeout</tt> - Timeout to use by the Net::HTTP object
     #   (60 by default)
     def initialize(options)
-      @access_key_id = options.fetch(:access_key_id)
-      @secret_access_key = options.fetch(:secret_access_key)
-      @use_ssl = options.fetch(:use_ssl, false)
-      @timeout = options.fetch(:timeout, 60)
-      @debug = options.fetch(:debug, false)
+      @access_key_id = options.fetch(:access_key_id, Sndacs::Config.access_key_id)
+      @secret_access_key = options.fetch(:secret_access_key, Sndacs::Config.secret_access_key)
+      @proxy = options.fetch(:proxy, Sndacs::Config.proxy)
+      @timeout = options.fetch(:timeout, Sndacs::Config.timeout)
+      @use_ssl = options.fetch(:use_ssl, Sndacs::Config.use_ssl)
+      @debug = options.fetch(:debug, Sndacs::Config.debug)
 
-      raise ArgumentError, "Missing proxy settings. Must specify at least :host." if options[:proxy] && !options[:proxy][:host]
-      @proxy = options.fetch(:proxy, nil)
+      raise ArgumentError, "Wrong proxy settings. Must specify at least :host option." if @proxy && !@proxy[:host]
     end
 
     # Returns all buckets in the service and caches the result (see
@@ -71,7 +71,7 @@ module Sndacs
       "#<#{self.class}:#@access_key_id>"
     end
 
-    private
+  private
 
     def list_all_my_buckets
       response = service_request(:get)

@@ -1,7 +1,11 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
 module Sndacs
 
   # Class responsible for handling connections to grandcloud hosts
   class Connection
+
     include Parser
 
     attr_accessor :access_key_id, :secret_access_key, :use_ssl, :timeout, :debug, :proxy
@@ -24,13 +28,13 @@ module Sndacs
     # * <tt>:chunk_size</tt> - Size of a chunk when streaming
     #   (1048576 (1 MiB) by default)
     def initialize(options = {})
-      @access_key_id = options.fetch(:access_key_id)
-      @secret_access_key = options.fetch(:secret_access_key)
-      @use_ssl = options.fetch(:use_ssl, false)
-      @debug = options.fetch(:debug, false)
-      @timeout = options.fetch(:timeout, 60)
-      @proxy = options.fetch(:proxy, nil)
-      @chunk_size = options.fetch(:chunk_size, 1048576)
+      @access_key_id = options.fetch(:access_key_id, Sndacs::Config.access_key_id)
+      @secret_access_key = options.fetch(:secret_access_key, Sndacs::Config.secret_access_key)
+      @proxy = options.fetch(:proxy, Sndacs::Config.proxy)
+      @timeout = options.fetch(:timeout, Sndacs::Config.timeout)
+      @use_ssl = options.fetch(:use_ssl, Sndacs::Config.use_ssl)
+      @chunk_size = options.fetch(:chunk_size, Sndacs::Config.chunk_size)
+      @debug = options.fetch(:debug, Sndacs::Config.debug)
     end
 
     # Makes request with given HTTP method, sets missing parameters,
@@ -55,7 +59,7 @@ module Sndacs
     # ==== Returns
     # Net::HTTPResponse object -- response from the server
     def request(method, options)
-      host = options.fetch(:host, HOST)
+      host = options.fetch(:host, Sndacs::Config.host)
       path = options.fetch(:path)
       body = options.fetch(:body, nil)
       params = options.fetch(:params, {})
