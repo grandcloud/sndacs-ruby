@@ -28,13 +28,13 @@ module Sndacs
     # * <tt>:chunk_size</tt> - Size of a chunk when streaming
     #   (1048576 (1 MiB) by default)
     def initialize(options = {})
-      @access_key_id = options.fetch(:access_key_id, Sndacs::Config.access_key_id)
-      @secret_access_key = options.fetch(:secret_access_key, Sndacs::Config.secret_access_key)
-      @proxy = options.fetch(:proxy, Sndacs::Config.proxy)
-      @timeout = options.fetch(:timeout, Sndacs::Config.timeout)
-      @use_ssl = options.fetch(:use_ssl, Sndacs::Config.use_ssl)
-      @chunk_size = options.fetch(:chunk_size, Sndacs::Config.chunk_size)
-      @debug = options.fetch(:debug, Sndacs::Config.debug)
+      @access_key_id = options.fetch(:access_key_id, Config.access_key_id)
+      @secret_access_key = options.fetch(:secret_access_key, Config.secret_access_key)
+      @proxy = options.fetch(:proxy, Config.proxy)
+      @timeout = options.fetch(:timeout, Config.timeout)
+      @use_ssl = options.fetch(:use_ssl, Config.use_ssl)
+      @chunk_size = options.fetch(:chunk_size, Config.chunk_size)
+      @debug = options.fetch(:debug, Config.debug)
     end
 
     # Makes request with given HTTP method, sets missing parameters,
@@ -59,7 +59,7 @@ module Sndacs
     # ==== Returns
     # Net::HTTPResponse object -- response from the server
     def request(method, options)
-      host = options.fetch(:host, Sndacs::Config.host)
+      host = options.fetch(:host, Config.host)
       path = options.fetch(:path)
       body = options.fetch(:body, nil)
       params = options.fetch(:params, {})

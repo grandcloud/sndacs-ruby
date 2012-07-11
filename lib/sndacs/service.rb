@@ -32,12 +32,12 @@ module Sndacs
     # * <tt>:timeout</tt> - Timeout to use by the Net::HTTP object
     #   (60 by default)
     def initialize(options = {})
-      @access_key_id = options.fetch(:access_key_id, Sndacs::Config.access_key_id)
-      @secret_access_key = options.fetch(:secret_access_key, Sndacs::Config.secret_access_key)
-      @proxy = options.fetch(:proxy, Sndacs::Config.proxy)
-      @timeout = options.fetch(:timeout, Sndacs::Config.timeout)
-      @use_ssl = options.fetch(:use_ssl, Sndacs::Config.use_ssl)
-      @debug = options.fetch(:debug, Sndacs::Config.debug)
+      @access_key_id = options.fetch(:access_key_id, Config.access_key_id)
+      @secret_access_key = options.fetch(:secret_access_key, Config.secret_access_key)
+      @proxy = options.fetch(:proxy, Config.proxy)
+      @timeout = options.fetch(:timeout, Config.timeout)
+      @use_ssl = options.fetch(:use_ssl, Config.use_ssl)
+      @debug = options.fetch(:debug, Config.debug)
 
       raise ArgumentError, "Wrong proxy settings. Must specify at least :host option." if @proxy && !@proxy[:host]
     end
@@ -52,7 +52,7 @@ module Sndacs
     # bucket exists. But also does not issue any HTTP requests, so it's
     # much faster than buckets.find
     def bucket(name, region = nil)
-      Bucket.send(:new, self, name, region || Sndacs::REGION_DEFAULT)
+      Bucket.send(:new, self, name, region || REGION_DEFAULT)
     end
 
     # Returns "http://" or "https://", depends on <tt>:use_ssl</tt>

@@ -40,6 +40,7 @@ module Sndacs
   Config.access_key_id = ''
   Config.secret_access_key = ''
   Config.host = 'storage.grandcloud.cn'
+  Config.content_host = 'storage.sdcloud.cn'
   Config.proxy = nil
   Config.timeout = 60
   Config.use_ssl = false

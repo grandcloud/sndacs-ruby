@@ -97,14 +97,14 @@ module Sndacs
     # Returns host name of the bucket according (see #vhost? method)
     def host(user_content = false)
       if user_content
-        region_host = Sndacs::Config.content_host
+        region_host = Config.content_host
         if @location
-          region_host = Sndacs::CONTENT_HOST % @location
+          region_host = CONTENT_HOST % @location
         end
       else
-        region_host = Sndacs::Config.host
+        region_host = Config.host
         if @location
-          region_host = Sndacs::REGION_HOST % @location
+          region_host = REGION_HOST % @location
         end
       end
 
@@ -141,7 +141,7 @@ module Sndacs
       location = options[:location].to_s.downcase if options[:location]
       
       options[:headers] ||= {}
-      if location and location != Sndacs::REGION_DEFAULT
+      if location and location != REGION_DEFAULT
         options[:headers][:content_type] = "application/xml"
         options[:body] = "<CreateBucketConfiguration><LocationConstraint>#{location}</LocationConstraint></CreateBucketConfiguration>"
       end
@@ -199,7 +199,7 @@ module Sndacs
         begin
           location = location_constraint
         rescue
-          location = Sndacs::REGION_DEFAULT
+          location = REGION_DEFAULT
         end
       end
 

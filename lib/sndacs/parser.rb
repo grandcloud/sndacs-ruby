@@ -21,7 +21,7 @@ module Sndacs
         if element_location
           bucket_attributes[:location] = element_location.text
         else
-          bucket_attributes[:location] = Sndacs::REGION_DEFAULT
+          bucket_attributes[:location] = REGION_DEFAULT
         end
 
         all_buckets << bucket_attributes
@@ -48,7 +48,7 @@ module Sndacs
     def parse_location_constraint(xml)
       location = rexml_document(xml).elements["LocationConstraint"].text
       if location.nil? || location == ''
-        location = Sndacs::REGION_DEFAULT
+        location = REGION_DEFAULT
       end
 
       location
