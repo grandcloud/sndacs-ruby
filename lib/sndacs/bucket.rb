@@ -95,10 +95,17 @@ module Sndacs
     end
 
     # Returns host name of the bucket according (see #vhost? method)
-    def host
-      region_host = Sndacs::Config.host
-      if @location
-        region_host = Sndacs::REGION_HOST % @location
+    def host(user_content = false)
+      if user_content
+        region_host = Sndacs::Config.content_host
+        if @location
+          region_host = Sndacs::CONTENT_HOST % @location
+        end
+      else
+        region_host = Sndacs::Config.host
+        if @location
+          region_host = Sndacs::REGION_HOST % @location
+        end
       end
 
       vhost? ? "#@name.#{region_host}" : region_host

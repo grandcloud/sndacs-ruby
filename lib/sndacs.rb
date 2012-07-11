@@ -33,6 +33,9 @@ module Sndacs
   # Bucket region host template
   REGION_HOST = 'storage-%s.grandcloud.cn'
 
+  # Object public access host template
+  CONTENT_HOST = 'storage-%s.sdcloud.cn'
+
   # Default configurations, see Sndacs::Config for more info
   Config.access_key_id = ''
   Config.secret_access_key = ''

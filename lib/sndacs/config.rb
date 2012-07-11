@@ -11,6 +11,7 @@ module Sndacs
 
       attr_accessor :proxy
       attr_accessor :host
+      attr_accessor :content_host
       attr_accessor :timeout
       attr_accessor :use_ssl
       attr_accessor :chunk_size
@@ -30,6 +31,10 @@ module Sndacs
 
       def host
         @host ||= 'storage.grandcloud.cn'
+      end
+
+      def content_host
+        @content_host ||= 'storage.sdcloud.cn'
       end
 
       def timeout
