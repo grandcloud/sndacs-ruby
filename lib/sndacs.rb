@@ -37,14 +37,14 @@ module Sndacs
   CONTENT_HOST = 'storage-%s.sdcloud.cn'
 
   # Default configurations, see Sndacs::Config for more info
-  Config.access_key_id = ''
-  Config.secret_access_key = ''
-  Config.host = 'storage.grandcloud.cn'
-  Config.content_host = 'storage.sdcloud.cn'
-  Config.proxy = nil
-  Config.timeout = 60
-  Config.use_ssl = false
-  Config.chunk_size = 1048576
-  Config.debug = false
+  #Config.access_key_id = ''
+  #Config.secret_access_key = ''
+  #Config.host = 'storage.grandcloud.cn'
+  #Config.content_host = 'storage.sdcloud.cn'
+  #Config.proxy = nil
+  #Config.timeout = 60
+  #Config.use_ssl = false
+  #Config.chunk_size = 1048576
+  #Config.debug = false
 
 end
