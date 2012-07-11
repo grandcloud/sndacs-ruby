@@ -27,6 +27,12 @@ require "sndacs/version"
 
 module Sndacs
 
+  # Bucket default region
+  REGION_DEFAULT = 'huadong-1'
+
+  # Bucket region host template
+  REGION_HOST = 'storage-%s.grandcloud.cn'
+
   # Default configurations, see Sndacs::Config for more info
   Config.access_key_id = ''
   Config.secret_access_key = ''

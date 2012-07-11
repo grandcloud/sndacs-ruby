@@ -53,6 +53,7 @@ module Sndacs
     class EntityTooSmall < ResponseError; end
     class EntityTooLarge < ResponseError; end
     class ExpiredToken < ResponseError; end
+    class ForbiddenBucket < ResponseError; end
     class IncompleteBody < ResponseError; end
     class IncorrectNumberOfFilesInPostRequestPOST < ResponseError; end
     class InlineDataTooLarge < ResponseError; end

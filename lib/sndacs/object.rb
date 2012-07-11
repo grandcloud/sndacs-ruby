@@ -74,7 +74,9 @@ module Sndacs
     # clear the cache and download the object again.
     def content(reload = false)
       return @content if defined?(@content) and not reload
+
       get_object
+
       @content
     end
 

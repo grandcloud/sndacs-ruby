@@ -71,7 +71,10 @@ module Sndacs
 
       if params
         params = params.is_a?(String) ? params : self.class.parse_params(params)
-        path << "?#{params}"
+
+        if params != ''
+          path << "?#{params}"
+        end
       end
 
       request = Request.new(@chunk_size, method.to_s.upcase, !!body, method.to_s.upcase != "HEAD", path)
@@ -224,6 +227,7 @@ module Sndacs
           raise Error::ResponseError.new(nil, response)
         else
           code, message = parse_error(response.body)
+
           raise Error::ResponseError.exception(code).new(message, response)
         end
       else

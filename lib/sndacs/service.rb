@@ -45,14 +45,14 @@ module Sndacs
     # Returns all buckets in the service and caches the result (see
     # +reload+)
     def buckets
-      Proxy.new(lambda { list_all_my_buckets }, :owner => self, :extend => BucketsExtension)
+      Proxy.new(lambda { buckets_all }, :owner => self, :extend => BucketsExtension)
     end
 
-    # Returns the bucket with the given name. Does not check whether the
+    # Returns the bucket with the given name and region. Does not check whether the
     # bucket exists. But also does not issue any HTTP requests, so it's
     # much faster than buckets.find
-    def bucket(name)
-      Bucket.send(:new, self, name)
+    def bucket(name, region = nil)
+      Bucket.send(:new, self, name, region || Sndacs::REGION_DEFAULT)
     end
 
     # Returns "http://" or "https://", depends on <tt>:use_ssl</tt>
@@ -73,14 +73,24 @@ module Sndacs
 
   private
 
-    def list_all_my_buckets
+    def buckets_all
       response = service_request(:get)
-      names = parse_list_all_my_buckets_result(response.body)
-      names.map { |name| Bucket.send(:new, self, name) }
+
+      all_buckets = parse_all_buckets_result(response.body)
+      all_buckets.map { |bucket| Bucket.send(:new, self, bucket[:name], bucket[:region]) }
     end
 
     def service_request(method, options = {})
-      connection.request(method, options.merge(:path => "/#{options[:path]}"))
+      unless options[:path]
+        options[:path] = '/'
+      end
+
+      req_path = options[:path]
+      if req_path[0,1] != '/'
+        req_path = "/#{req_path}"
+      end
+
+      connection.request(method, options.merge(:path => req_path))
     end
 
     def connection
@@ -88,8 +98,8 @@ module Sndacs
                                      :secret_access_key => @secret_access_key,
                                      :use_ssl => @use_ssl,
                                      :timeout => @timeout,
-                                     :debug => @debug,
-                                     :proxy => @proxy)
+                                     :proxy => @proxy,
+                                     :debug => @debug)
     end
   end
 

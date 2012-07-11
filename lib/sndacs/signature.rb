@@ -120,6 +120,7 @@ module Sndacs
       digest = OpenSSL::Digest::Digest.new("sha1")
       hmac = OpenSSL::HMAC.digest(digest, secret_access_key, string_to_sign)
       base64 = Base64.encode64(hmac)
+
       base64.chomp
     end
 
@@ -209,7 +210,7 @@ module Sndacs
       # requests that don't address a bucket, do nothing. For more
       # information on virtual hosted-style requests, see Virtual
       # Hosting of Buckets.
-      bucket_name = host.sub(/\.?storage\.grandcloud\.cn\Z/, "")
+      bucket_name = host.sub(/\.?storage[a-zA-Z0-9\-]*?\.grandcloud\.cn\Z/, "")
       string << "/#{bucket_name}" unless bucket_name.empty?
 
       # 3. Append the path part of the un-decoded HTTP Request-URI,

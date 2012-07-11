@@ -9,7 +9,10 @@ module Sndacs
     # Finds the bucket with given name
     def find_first(name)
       bucket = build(name)
+
       bucket.retrieve
+    rescue Error::NoSuchBucket, Error::ForbiddenBucket
+      nil
     end
     alias :find :find_first
 
