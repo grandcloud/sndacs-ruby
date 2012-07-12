@@ -1,4 +1,5 @@
 module Sndacs
+
   module BucketsExtension
     # Builds new bucket with given name
     def build(name)
@@ -8,7 +9,10 @@ module Sndacs
     # Finds the bucket with given name
     def find_first(name)
       bucket = build(name)
+
       bucket.retrieve
+    rescue Error::NoSuchBucket, Error::ForbiddenBucket
+      nil
     end
     alias :find :find_first
 
@@ -23,4 +27,5 @@ module Sndacs
       proxy_target.each { |bucket| bucket.destroy(force) }
     end
   end
+
 end

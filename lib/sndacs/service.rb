@@ -3,15 +3,16 @@ require 'net/http'
 require 'proxies'
 
 require 'sndacs/parser'
-require 'sndacs/buckets_extension'
 require 'sndacs/connection'
+require 'sndacs/buckets_extension'
 
 module Sndacs
+
   class Service
     include Parser
     include Proxies
 
-    attr_reader :access_key_id, :secret_access_key, :use_ssl, :proxy
+    attr_reader :access_key_id, :secret_access_key, :proxy , :use_ssl
 
     # Compares service to other, by <tt>access_key_id</tt> and
     # <tt>secret_access_key</tt>
@@ -30,28 +31,28 @@ module Sndacs
     #   (false by default)
     # * <tt>:timeout</tt> - Timeout to use by the Net::HTTP object
     #   (60 by default)
-    def initialize(options)
-      @access_key_id = options.fetch(:access_key_id)
-      @secret_access_key = options.fetch(:secret_access_key)
-      @use_ssl = options.fetch(:use_ssl, false)
-      @timeout = options.fetch(:timeout, 60)
-      @debug = options.fetch(:debug, false)
+    def initialize(options = {})
+      @access_key_id = options.fetch(:access_key_id, Config.access_key_id)
+      @secret_access_key = options.fetch(:secret_access_key, Config.secret_access_key)
+      @proxy = options.fetch(:proxy, Config.proxy)
+      @timeout = options.fetch(:timeout, Config.timeout)
+      @use_ssl = options.fetch(:use_ssl, Config.use_ssl)
+      @debug = options.fetch(:debug, Config.debug)
 
-      raise ArgumentError, "Missing proxy settings. Must specify at least :host." if options[:proxy] && !options[:proxy][:host]
-      @proxy = options.fetch(:proxy, nil)
+      raise ArgumentError, "Wrong proxy settings. Must specify at least :host option." if @proxy && !@proxy[:host]
     end
 
     # Returns all buckets in the service and caches the result (see
     # +reload+)
     def buckets
-      Proxy.new(lambda { list_all_my_buckets }, :owner => self, :extend => BucketsExtension)
+      Proxy.new(lambda { buckets_all }, :owner => self, :extend => BucketsExtension)
     end
 
-    # Returns the bucket with the given name. Does not check whether the
+    # Returns the bucket with the given name and region. Does not check whether the
     # bucket exists. But also does not issue any HTTP requests, so it's
     # much faster than buckets.find
-    def bucket(name)
-      Bucket.send(:new, self, name)
+    def bucket(name, region = nil)
+      Bucket.send(:new, self, name, region || REGION_DEFAULT)
     end
 
     # Returns "http://" or "https://", depends on <tt>:use_ssl</tt>
@@ -70,26 +71,36 @@ module Sndacs
       "#<#{self.class}:#@access_key_id>"
     end
 
-    private
+  private
 
-    def list_all_my_buckets
+    def buckets_all
       response = service_request(:get)
-      names = parse_list_all_my_buckets_result(response.body)
-      names.map { |name| Bucket.send(:new, self, name) }
+
+      all_buckets = parse_all_buckets_result(response.body)
+      all_buckets.map { |bucket| Bucket.send(:new, self, bucket[:name], bucket[:region]) }
     end
 
     def service_request(method, options = {})
-      connection.request(method, options.merge(:path => "/#{options[:path]}"))
+      unless options[:path]
+        options[:path] = '/'
+      end
+
+      req_path = options[:path]
+      if req_path[0,1] != '/'
+        req_path = "/#{req_path}"
+      end
+
+      connection.request(method, options.merge(:path => req_path))
     end
 
     def connection
-      return @connection if defined?(@connection)
-      @connection = Connection.new(:access_key_id => @access_key_id,
-                               :secret_access_key => @secret_access_key,
-                               :use_ssl => @use_ssl,
-                               :timeout => @timeout,
-                               :debug => @debug,
-                               :proxy => @proxy)
+      @connection ||= Connection.new(:access_key_id => @access_key_id,
+                                     :secret_access_key => @secret_access_key,
+                                     :use_ssl => @use_ssl,
+                                     :timeout => @timeout,
+                                     :proxy => @proxy,
+                                     :debug => @debug)
     end
   end
+
 end
