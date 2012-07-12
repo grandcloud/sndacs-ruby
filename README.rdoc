@@ -5,9 +5,8 @@ sndacs library provides access to {SNDA Cloud Storage}[http://www.grandcloud.cn/
 bases on the s3 gem: https://github.com/qoobaa/s3
 
 == Installation
-    ```bash
+
     gem install sndacs
-    ```
 
 == Usage
 
