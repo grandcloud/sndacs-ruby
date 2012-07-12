@@ -18,7 +18,7 @@ bases on the s3 gem: https://github.com/qoobaa/s3
                                   :secret_access_key => '...')
     #=> #<Sndacs::Service:...>
 
-or use even flexible style
+or use even more flexible config style
 
     require "sndacs"
 
