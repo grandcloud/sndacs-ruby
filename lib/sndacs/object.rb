@@ -1,6 +1,6 @@
 module Sndacs
 
-  # Class responsible for handling objects stored in S3 buckets
+  # Class responsible for handling objects stored in CS buckets
   class Object
     include Parser
     extend Forwardable
@@ -10,7 +10,7 @@ module Sndacs
     attr_writer :content
 
     def_instance_delegators :bucket, :name, :service, :bucket_request, :vhost?, :host, :path_prefix
-    def_instance_delegators :service, :protocol, :port, :secret_access_key
+    def_instance_delegators :service, :protocol, :port, :access_key_id, :secret_access_key
     private_class_method :new
 
     # Compares the object with other object. Returns true if the key
@@ -57,30 +57,24 @@ module Sndacs
     # to do it).
     def retrieve
       object_headers
-      self
-    end
 
-    # Retrieves the object from the server, returns true if the object
-    # exists or false otherwise. Uses #retrieve method, but catches
-    # S3::Error::NoSuchKey exception and returns false when it happens
-    def exists?
-      retrieve
-      true
-    rescue Error::NoSuchKey
-      false
+      self
     end
 
     # Downloads the content of the object, and caches it. Pass true to
     # clear the cache and download the object again.
     def content(reload = false)
       return @content if defined?(@content) and not reload
+
       get_object
+
       @content
     end
 
     # Saves the object, returns true if successfull.
     def save
       put_object
+
       true
     end
 
@@ -89,7 +83,7 @@ module Sndacs
     # ==== Options
     # * <tt>:key</tt> - New key to store object in
     # * <tt>:bucket</tt> - New bucket to store object in (instance of
-    #   S3::Bucket)
+    #   Sndacs::Bucket)
     # * <tt>:acl</tt> - ACL of the copied object (default:
     #   "public-read")
     # * <tt>:content_type</tt> - Content type of the copied object
@@ -101,27 +95,17 @@ module Sndacs
     # Destroys the file on the server
     def destroy
       delete_object
+
       true
     end
 
     # Returns Object's URL using protocol specified in service,
-    # e.g. <tt>http://domain.com.s3.amazonaws.com/key/with/path.extension</tt>
+    # e.g. <tt>http://storage.grandcloud.cn/bucket/key/file.extension</tt>
     def url
       URI.escape("#{protocol}#{host}/#{path_prefix}#{key}")
     end
 
-    # Returns a temporary url to the object that expires on the
-    # timestamp given. Defaults to one hour expire time.
-    def temporary_url(expires_at = Time.now + 3600)
-      signature = Signature.generate_temporary_url_signature(:bucket => name,
-                                                             :resource => key,
-                                                             :expires_at => expires_at,
-                                                             :secret_access_key => secret_access_key)
-
-      "#{url}?AWSAccessKeyId=#{self.bucket.service.access_key_id}&Expires=#{expires_at.to_i.to_s}&Signature=#{signature}"
-    end
-
-    # Returns Object's CNAME URL (without <tt>s3.amazonaws.com</tt>
+    # Returns Object's CNAME URL (without <tt>storage.grandcloud.cn</tt>
     # suffix) using protocol specified in Service,
     # e.g. <tt>http://domain.com/key/with/path.extension</tt>. (you
     # have to set the CNAME in your DNS before using the CNAME URL
@@ -130,11 +114,34 @@ module Sndacs
       URI.escape("#{protocol}#{name}/#{key}") if bucket.vhost?
     end
 
+    # Returns a temporary url to the object that expires on the
+    # timestamp given. Defaults to 5min expire time.
+    def temporary_url(expires_at = Time.now + 3600)
+      url = URI.escape("#{protocol}#{host(true)}/#{path_prefix}#{key}")
+      signature = Signature.generate_temporary_url_signature(:bucket => name,
+                                                             :resource => key,
+                                                             :expires_at => expires_at,
+                                                             :secret_access_key => secret_access_key)
+
+      "#{url}?SNDAAccessKeyId=#{access_key_id}&Expires=#{expires_at.to_i.to_s}&Signature=#{signature}"
+    end
+
+    # Retrieves the object from the server, returns true if the object
+    # exists or false otherwise. Uses #retrieve method, but catches
+    # Sndacs::Error::NoSuchKey exception and returns false when it happens
+    def exists?
+      retrieve
+
+      true
+    rescue Error::NoSuchKey
+      false
+    end
+
     def inspect #:nodoc:
       "#<#{self.class}:/#{name}/#{key}>"
     end
 
-    private
+  private
 
     attr_writer :last_modified, :etag, :size, :original_key, :bucket
 
@@ -171,11 +178,13 @@ module Sndacs
 
     def get_object(options = {})
       response = object_request(:get, options)
+
       parse_headers(response)
     end
 
     def object_headers(options = {})
       response = object_request(:head, options)
+
       parse_headers(response)
     rescue Error::ResponseError => e
       if e.response.code.to_i == 404
@@ -187,6 +196,7 @@ module Sndacs
 
     def put_object
       response = object_request(:put, :body => content, :headers => dump_headers)
+
       parse_headers(response)
     end
 
@@ -250,4 +260,5 @@ module Sndacs
       end
     end
   end
+
 end

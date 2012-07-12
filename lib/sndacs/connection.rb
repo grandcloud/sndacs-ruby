@@ -1,7 +1,11 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
 module Sndacs
 
-  # Class responsible for handling connections to amazon hosts
+  # Class responsible for handling connections to grandcloud hosts
   class Connection
+
     include Parser
 
     attr_accessor :access_key_id, :secret_access_key, :use_ssl, :timeout, :debug, :proxy
@@ -24,13 +28,13 @@ module Sndacs
     # * <tt>:chunk_size</tt> - Size of a chunk when streaming
     #   (1048576 (1 MiB) by default)
     def initialize(options = {})
-      @access_key_id = options.fetch(:access_key_id)
-      @secret_access_key = options.fetch(:secret_access_key)
-      @use_ssl = options.fetch(:use_ssl, false)
-      @debug = options.fetch(:debug, false)
-      @timeout = options.fetch(:timeout, 60)
-      @proxy = options.fetch(:proxy, nil)
-      @chunk_size = options.fetch(:chunk_size, 1048576)
+      @access_key_id = options.fetch(:access_key_id, Config.access_key_id)
+      @secret_access_key = options.fetch(:secret_access_key, Config.secret_access_key)
+      @proxy = options.fetch(:proxy, Config.proxy)
+      @timeout = options.fetch(:timeout, Config.timeout)
+      @use_ssl = options.fetch(:use_ssl, Config.use_ssl)
+      @chunk_size = options.fetch(:chunk_size, Config.chunk_size)
+      @debug = options.fetch(:debug, Config.debug)
     end
 
     # Makes request with given HTTP method, sets missing parameters,
@@ -43,7 +47,7 @@ module Sndacs
     #
     # ==== Options:
     # * <tt>:host</tt> - Hostname to connecto to, defaults
-    #   to <tt>s3.amazonaws.com</tt>
+    #   to <tt>storage.grandcloud.cn</tt>
     # * <tt>:path</tt> - path to send request to (REQUIRED)
     # * <tt>:body</tt> - Request body, only meaningful for
     #   <tt>:put</tt> request
@@ -55,7 +59,7 @@ module Sndacs
     # ==== Returns
     # Net::HTTPResponse object -- response from the server
     def request(method, options)
-      host = options.fetch(:host, HOST)
+      host = options.fetch(:host, Config.host)
       path = options.fetch(:path)
       body = options.fetch(:body, nil)
       params = options.fetch(:params, {})
@@ -67,7 +71,10 @@ module Sndacs
 
       if params
         params = params.is_a?(String) ? params : self.class.parse_params(params)
-        path << "?#{params}"
+
+        if params != ''
+          path << "?#{params}"
+        end
       end
 
       request = Request.new(@chunk_size, method.to_s.upcase, !!body, method.to_s.upcase != "HEAD", path)
@@ -83,6 +90,7 @@ module Sndacs
         else
           request.body = body
         end
+
         request.content_length = body.respond_to?(:lstat) ? body.stat.size : body.size
       end
 
@@ -105,6 +113,7 @@ module Sndacs
       params.each do |key, value|
         if interesting_keys.include?(key)
           parsed_key = key.to_s.gsub("_", "-")
+
           case value
           when nil
             result << parsed_key
@@ -113,6 +122,7 @@ module Sndacs
           end
         end
       end
+
       result.join("&")
     end
 
@@ -144,18 +154,21 @@ module Sndacs
           if interesting_keys.include?(key)
             parsed_key = key.to_s.gsub("_", "-")
             parsed_value = value
+
             case value
             when Range
               parsed_value = "bytes=#{value.first}-#{value.last}"
             end
+
             parsed_headers[parsed_key] = parsed_value
           end
         end
       end
+
       parsed_headers
     end
 
-    private
+  private
 
     def port
       use_ssl ? 443 : 80
@@ -171,6 +184,7 @@ module Sndacs
       http.use_ssl = @use_ssl
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE if @use_ssl
       http.read_timeout = @timeout if @timeout
+
       http
     end
 
@@ -195,9 +209,17 @@ module Sndacs
         http.request(request)
       end
 
-      if response.code.to_i == 307
+      case response.code.to_i
+      when 301
         if response.body
           doc = Document.new response.body
+
+          send_request(doc.elements["Error"].elements["Endpoint"].text, request, true)
+        end
+      when 307
+        if response.body
+          doc = Document.new response.body
+
           send_request(doc.elements["Error"].elements["Endpoint"].text, request, true)
         end
       else
@@ -214,12 +236,15 @@ module Sndacs
           raise Error::ResponseError.new(nil, response)
         else
           code, message = parse_error(response.body)
+
           raise Error::ResponseError.exception(code).new(message, response)
         end
       else
         raise(ConnectionError.new(response, "Unknown response code: #{response.code}"))
       end
+
       response
     end
   end
+
 end

@@ -2,11 +2,11 @@ module Sndacs
 
   # Class responsible for generating signatures to requests.
   #
-  # Implements algorithm defined by Amazon Web Services to sign
+  # Implements algorithm defined by GrandCloud Web Services to sign
   # request with secret private credentials
   #
   # === See
-  # http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTAuthentication.html
+  # https://cs-console.grandcloud.cn/public/docs/GrandCloud_Storage_Developer_Guide.pdf
 
   class Signature
 
@@ -62,34 +62,7 @@ module Sndacs
       CGI.escape(signature)
     end
 
-    # Generates temporary URL for given resource
-    #
-    # ==== Options
-    # * <tt>:bucket</tt> - Bucket in which the resource resides
-    # * <tt>:resource</tt> - Path to the resouce you want to create
-    #   a temporary link to
-    # * <tt>:access_key</tt> - Access key
-    # * <tt>:secret_access_key</tt> - Secret access key
-    # * <tt>:expires_at</tt> - Unix time stamp of when the resouce
-    #   link will expire
-    # * <tt>:method</tt> - HTTP request method you want to use on
-    #   the resource, defaults to GET
-    # * <tt>:headers</tt> - Any additional HTTP headers you intend
-    #   to use when requesting the resource
-    def self.generate_temporary_url(options)
-      bucket = options[:bucket]
-      resource = options[:resource]
-      access_key = options[:access_key]
-      expires = options[:expires_at].to_i
-      signature = generate_temporary_url_signature(options)
-
-      url = "http://#{S3::HOST}/#{bucket}/#{resource}"
-      url << "?AWSAccessKeyId=#{access_key}"
-      url << "&Expires=#{expires}"
-      url << "&Signature=#{signature}"
-    end
-
-    private
+  private
 
     def self.canonicalized_signature(options)
       headers = options[:headers] || {}
@@ -120,6 +93,7 @@ module Sndacs
       digest = OpenSSL::Digest::Digest.new("sha1")
       hmac = OpenSSL::HMAC.digest(digest, secret_access_key, string_to_sign)
       base64 = Base64.encode64(hmac)
+
       base64.chomp
     end
 
@@ -209,7 +183,7 @@ module Sndacs
       # requests that don't address a bucket, do nothing. For more
       # information on virtual hosted-style requests, see Virtual
       # Hosting of Buckets.
-      bucket_name = host.sub(/\.?storage\.grandcloud\.cn\Z/, "")
+      bucket_name = host.sub(/\.?storage[a-zA-Z0-9\-]*?\.grandcloud\.cn\Z/, "")
       string << "/#{bucket_name}" unless bucket_name.empty?
 
       # 3. Append the path part of the un-decoded HTTP Request-URI,
@@ -240,4 +214,5 @@ module Sndacs
       string
     end
   end
+
 end
