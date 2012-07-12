@@ -14,6 +14,14 @@ bases on the s3 gem: https://github.com/qoobaa/s3
 
     require "sndacs"
 
+    service = Sndacs::Service.new(:access_key_id => '...'
+                                  :secret_access_key => '...')
+    #=> #<Sndacs::Service:...>
+
+or use even flexible style
+
+    require "sndacs"
+
     # Setup global default configurations, see Sndacs::Config for more info
     Config.access_key_id = '...'
     Config.secret_access_key = '...'
