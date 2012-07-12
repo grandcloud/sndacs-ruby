@@ -62,33 +62,6 @@ module Sndacs
       CGI.escape(signature)
     end
 
-    # Generates temporary URL for given resource
-    #
-    # ==== Options
-    # * <tt>:bucket</tt> - Bucket in which the resource resides
-    # * <tt>:resource</tt> - Path to the resouce you want to create
-    #   a temporary link to
-    # * <tt>:access_key</tt> - Access key
-    # * <tt>:secret_access_key</tt> - Secret access key
-    # * <tt>:expires_at</tt> - Unix time stamp of when the resouce
-    #   link will expire
-    # * <tt>:method</tt> - HTTP request method you want to use on
-    #   the resource, defaults to GET
-    # * <tt>:headers</tt> - Any additional HTTP headers you intend
-    #   to use when requesting the resource
-    def self.generate_temporary_url(options)
-      bucket = options[:bucket]
-      resource = options[:resource]
-      access_key = options[:access_key]
-      expires = options[:expires_at].to_i
-      signature = generate_temporary_url_signature(options)
-
-      url = "http://#{Config.host}/#{bucket}/#{resource}"
-      url << "?SNDAAccessKeyId=#{access_key}"
-      url << "&Expires=#{expires}"
-      url << "&Signature=#{signature}"
-    end
-
   private
 
     def self.canonicalized_signature(options)

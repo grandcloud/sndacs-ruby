@@ -184,6 +184,7 @@ module Sndacs
       http.use_ssl = @use_ssl
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE if @use_ssl
       http.read_timeout = @timeout if @timeout
+
       http
     end
 
@@ -208,9 +209,17 @@ module Sndacs
         http.request(request)
       end
 
-      if response.code.to_i == 307
+      case response.code.to_i
+      when 301
         if response.body
           doc = Document.new response.body
+
+          send_request(doc.elements["Error"].elements["Endpoint"].text, request, true)
+        end
+      when 307
+        if response.body
+          doc = Document.new response.body
+
           send_request(doc.elements["Error"].elements["Endpoint"].text, request, true)
         end
       else

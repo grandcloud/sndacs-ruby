@@ -10,7 +10,7 @@ module Sndacs
     attr_writer :content
 
     def_instance_delegators :bucket, :name, :service, :bucket_request, :vhost?, :host, :path_prefix
-    def_instance_delegators :service, :protocol, :port, :secret_access_key
+    def_instance_delegators :service, :protocol, :port, :access_key_id, :secret_access_key
     private_class_method :new
 
     # Compares the object with other object. Returns true if the key
@@ -100,9 +100,9 @@ module Sndacs
     end
 
     # Returns Object's URL using protocol specified in service,
-    # e.g. <tt>http://domain.com.storage.grandcloud.cn/key/with/path.extension</tt>
+    # e.g. <tt>http://storage.grandcloud.cn/bucket/key/file.extension</tt>
     def url
-      URI.escape("#{protocol}#{host}#{path_prefix}/#{key}")
+      URI.escape("#{protocol}#{host}/#{path_prefix}#{key}")
     end
 
     # Returns Object's CNAME URL (without <tt>storage.grandcloud.cn</tt>
@@ -115,15 +115,15 @@ module Sndacs
     end
 
     # Returns a temporary url to the object that expires on the
-    # timestamp given. Defaults to one hour expire time.
+    # timestamp given. Defaults to 5min expire time.
     def temporary_url(expires_at = Time.now + 3600)
-      url = URI.escape("#{protocol}#{host(true)}#{path_prefix}/#{key}")
+      url = URI.escape("#{protocol}#{host(true)}/#{path_prefix}#{key}")
       signature = Signature.generate_temporary_url_signature(:bucket => name,
                                                              :resource => key,
                                                              :expires_at => expires_at,
                                                              :secret_access_key => secret_access_key)
 
-      "#{url}?SNDAAccessKeyId=#{self.bucket.service.access_key_id}&Expires=#{expires_at.to_i.to_s}&Signature=#{signature}"
+      "#{url}?SNDAAccessKeyId=#{access_key_id}&Expires=#{expires_at.to_i.to_s}&Signature=#{signature}"
     end
 
     # Retrieves the object from the server, returns true if the object

@@ -28,13 +28,16 @@ require "sndacs/version"
 module Sndacs
 
   # Bucket default region
+  # NOTICE: DO NOT TOUCH THIS!!!
   REGION_DEFAULT = 'huadong-1'
 
   # Bucket region host template
+  # NOTICE: DO NOT TOUCH THIS!!!
   REGION_HOST = 'storage-%s.grandcloud.cn'
 
   # Object public access host template
-  CONTENT_HOST = 'storage-%s.sdcloud.cn'
+  # NOTICE: DO NOT TOUCH THIS!!!
+  REGION_CONTENT_HOST = 'storage-%s.sdcloud.cn'
 
   # Default configurations, see Sndacs::Config for more info
   #Config.access_key_id = ''

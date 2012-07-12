@@ -3,8 +3,8 @@ require 'net/http'
 require 'proxies'
 
 require 'sndacs/parser'
-require 'sndacs/buckets_extension'
 require 'sndacs/connection'
+require 'sndacs/buckets_extension'
 
 module Sndacs
 
@@ -12,7 +12,7 @@ module Sndacs
     include Parser
     include Proxies
 
-    attr_reader :access_key_id, :secret_access_key, :use_ssl, :proxy
+    attr_reader :access_key_id, :secret_access_key, :proxy , :use_ssl
 
     # Compares service to other, by <tt>access_key_id</tt> and
     # <tt>secret_access_key</tt>

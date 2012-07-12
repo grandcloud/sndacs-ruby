@@ -39,8 +39,7 @@ module Sndacs
     # ==== Options
     # * <tt>:location</tt> - location of the bucket
     #   (<tt>huabei-1</tt> or <tt>huadong-1</tt>)
-    # * Any other options are passed through to
-    #   Connection#request
+    # * Any other options are passed through to Connection#request
     def save(options = {})
       if options
         if options.is_a?(String) && options.strip != ''
@@ -48,10 +47,10 @@ module Sndacs
         end
 
         if options.is_a?(Hash) && !options.has_key?(:location)
-          options.merge!(:location => @location)
+          options.merge!(:location => location)
         end
       else
-        options = {:location => @location}
+        options = {:location => location}
       end
 
       create_bucket_configuration(options)
@@ -60,8 +59,8 @@ module Sndacs
     end
 
     # Destroys given bucket. Raises an Sndacs::Error::BucketNotEmpty
-    # exception if the bucket is not empty. You can destroy non-empty
-    # bucket passing true (to force destroy)
+    # exception if the bucket is not empty.
+    # You can destroy non-empty bucket passing true (to force destroy)
     def destroy(force = false)
       delete_bucket
 
@@ -86,35 +85,23 @@ module Sndacs
       false
     end
 
-    # Returns true if the name of the bucket can be used like +VHOST+
-    # name. If the bucket contains characters like underscore it can't
+    # Returns true if the name of the bucket can be used like +VHOST+ name.
+    # If the bucket contains characters like underscore it can't
     # be used as +VHOST+ (e.g. <tt>bucket_name.storage.grandcloud.cn</tt>)
     def vhost?
-      #"#@name.#{Sndacs::Config.host}" =~ /\A#{URI::REGEXP::PATTERN::HOSTNAME}\Z/
+      #"#@name.#{region_host}" =~ /\A#{URI::REGEXP::PATTERN::HOSTNAME}\Z/
       false
     end
 
     # Returns host name of the bucket according (see #vhost? method)
-    def host(user_content = false)
-      if user_content
-        region_host = Config.content_host
-        if @location
-          region_host = CONTENT_HOST % @location
-        end
-      else
-        region_host = Config.host
-        if @location
-          region_host = REGION_HOST % @location
-        end
-      end
-
-      vhost? ? "#@name.#{region_host}" : region_host
+    def host(public_accessible = false)
+      vhost? ? "#@name.#{region_host(public_accessible)}" : region_host(public_accessible)
     end
 
     # Returns path prefix for non +VHOST+ bucket. Path prefix is used
-    # instead of +VHOST+ name, e.g. "/bucket_name"
+    # instead of +VHOST+ name, e.g. "bucket_name/"
     def path_prefix
-      vhost? ? "" : "/#@name"
+      vhost? ? "" : "#@name/"
     end
 
     # Returns the objects in the bucket and caches the result
@@ -161,6 +148,7 @@ module Sndacs
 
         if max_keys
           break if objects_attributes.length >= max_keys
+
           next_request_options[:max_keys] = max_keys - objects_attributes.length
         end
 
@@ -208,6 +196,7 @@ module Sndacs
 
     def name=(name)
       raise ArgumentError.new("Invalid bucket name: #{name}") unless name_valid?(name)
+
       @name = name
     end
 
@@ -219,14 +208,19 @@ module Sndacs
       name =~ /\A[a-z0-9][a-z0-9\._-]{2,254}\Z/i and name !~ /\A#{URI::REGEXP::PATTERN::IPV4ADDR}\Z/
     end
 
-    def bucket_request(method, options = {})
-      path = path_prefix
-      if options[:path]
-          path << '/' unless path[-1,1] == '/'
-          path << options[:path]
+    def region_host(public_accessible = false)
+      rhost = public_accessible ? Config.content_host : Config.host
+      if @location
+        rhost = (public_accessible ? REGION_CONTENT_HOST : REGION_HOST) % @location
       end
 
-      service_request(method, options.merge(:host => host, :path => File.expand_path(path)))
+      rhost
+    end
+
+    def bucket_request(method, options = {})
+      path = "#{path_prefix}#{options[:path]}"
+
+      service_request(method, options.merge(:host => host, :path => path))
     end
   end
 
