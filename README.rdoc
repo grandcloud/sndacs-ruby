@@ -13,7 +13,6 @@ bases on the s3 gem: https://github.com/qoobaa/s3
 
 === Initialize the service
 
-    ```ruby
     require "sndacs"
 
     service = Sndacs::Service.new(:access_key_id => '...'
@@ -36,62 +35,46 @@ or use even flexible style
     Config.debug = false
     service = Sndacs::Service.new
     #=> #<Sndacs::Service:...>
-    ```
 
 === List buckets
 
-    ```ruby
     service.buckets
     #=> [#<Sndacs::Bucket:first-bucket>,
     #    #<Sndacs::Bucket:second-bucket>]
-    ```
 
 === Find bucket
 
-    ```ruby
     first_bucket = service.buckets.find("first-bucket")
     #=> #<Sndacs::Bucket:first-bucket>
-    ```
 
 === List objects in a bucket
 
-    ```ruby
     first_bucket.objects
     #=> [#<Sndacs::Object:/first-bucket/lenna.png>,
     #    #<Sndacs::Object:/first-bucket/lenna_mini.png>]
-    ```
 
 === Find object in a bucket
 
-    ```ruby
     object = first_bucket.objects.find("lenna.png")
     #=> #<Sndacs::Object:/first-bucket/lenna.png>
-    ```
 
 === Access object metadata (cached from find)
 
-    ```ruby
     object.content_type
     #=> "image/png"
-    ```
 
 === Access object content (downloads the object)
 
-    ```ruby
     object.content
     #=> "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00..."
-    ```
 
 === Delete an object
 
-    ```ruby
     object.destroy
     #=> true
-    ```
 
 === Create an object
 
-    ```ruby
     new_object = bucket.objects.build("bender.png")
     #=> #<Sndacs::Object:/synergy-staging/bender.png>
 
@@ -99,7 +82,6 @@ or use even flexible style
 
     new_object.save
     #=> true
-    ```
 
 Please note that new objects are created with "private" ACL by
 default.
