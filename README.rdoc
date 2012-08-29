@@ -41,10 +41,24 @@ or use even more flexible config style
     #=> [#<Sndacs::Bucket:first-bucket>,
     #    #<Sndacs::Bucket:second-bucket>]
 
+=== Create bucket
+
+create a bucket to default location(huabei-1)
+    new_bucket = service.buckets.build("rubybucketdefault")
+    new_bucket.save
+
+create a bucket to specify location,location can be 'huadong-1' or 'huabei-1' ,default to huabei-1
+    new_bucket = service.buckets.build("rubybuckethuadong-1")
+    new_bucket.save(:location=>"huadong-1")
+
 === Find bucket
 
     first_bucket = service.buckets.find("first-bucket")
     #=> #<Sndacs::Bucket:first-bucket>
+
+=== Get bucket's location
+    
+    first_bucket.location
 
 === List objects in a bucket
 
