@@ -10,8 +10,8 @@ end
 module Sndacs
 
   # Default configurations, see Sndacs::Config for more info
-  Config.access_key_id = '7EDX20CJ54PA31INPXTD469MR'
-  Config.secret_access_key = 'NzljZWE0MzgtNGQ0Yi00ZGZiLWI0YzMtOTQzODE2MTkzN2Nk'
+  Config.access_key_id = 'yourkey'
+  Config.secret_access_key = 'yoursecret'
   Config.host = 'storage.grandcloud.cn'
   Config.content_host = 'storage.sdcloud.cn'
   Config.proxy = nil 

@@ -40,7 +40,7 @@ module Sndacs
     # * <tt>:location</tt> - location of the bucket
     #   (<tt>huabei-1</tt> or <tt>huadong-1</tt>)
     # * Any other options are passed through to Connection#request
-    def save(options = {})
+    def save(options = { :location => 'huabei-1'})
       if options
         if options.is_a?(String) && options.strip != ''
           options = {:location => options.strip}
@@ -48,6 +48,10 @@ module Sndacs
 
         if options.is_a?(Hash) && !options.has_key?(:location)
           options.merge!(:location => location)
+        end
+        
+        if options.is_a?(Hash) && options.has_key?(:location)
+           @location = options[:location]
         end
       else
         options = {:location => location}
@@ -128,7 +132,7 @@ module Sndacs
       location = options[:location].to_s.downcase if options[:location]
       
       options[:headers] ||= {}
-      if location and location != REGION_DEFAULT
+      if location #and location != REGION_DEFAULT
         options[:headers][:content_type] = "application/xml"
         options[:body] = "<CreateBucketConfiguration><LocationConstraint>#{location}</LocationConstraint></CreateBucketConfiguration>"
       end

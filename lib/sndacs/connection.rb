@@ -179,6 +179,22 @@ module Sndacs
     end
 
     def http(host)
+  
+      if host.index("http://") === 0
+         start = "http://".size
+         host = host.slice(start,host.size-start)
+      end
+      
+      if host.index("https://") === 0
+         start = "https://".size
+         host = host.slice(start,host.size-start)
+      end
+      
+      endid = host.index("/")
+      if endid != nil
+         host = host.slice(0,endid)
+      end
+
       http = Net::HTTP.new(host, port, *proxy_settings)
       http.set_debug_output(STDOUT) if @debug
       http.use_ssl = @use_ssl
