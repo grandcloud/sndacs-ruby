@@ -81,6 +81,11 @@ create a bucket to specify location,location can be 'huadong-1' or 'huabei-1' ,d
     object.content
     #=> "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00..."
 
+=== Get A temporary url to an object
+
+Get a temporary url to the object that expires on the timestamp given.Defaults to 1hour expire time
+    object.temporary_url( Time.now + 60 )
+
 === Delete an object
 
     object.destroy
