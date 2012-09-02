@@ -64,11 +64,13 @@ module Sndacs
       body = options.fetch(:body, nil)
       params = options.fetch(:params, {})
       headers = options.fetch(:headers, {})
-
+      subresource = options.fetch(:subresource,nil)
       # Must be done before adding params
       # Encodes all characters except forward-slash (/) and explicitly legal URL characters
       path = URI.escape(path, /[^#{URI::REGEXP::PATTERN::UNRESERVED}\/]/)
-
+      if subresource
+         path << "?#{subresource}"
+      end
       if params
         params = params.is_a?(String) ? params : self.class.parse_params(params)
 

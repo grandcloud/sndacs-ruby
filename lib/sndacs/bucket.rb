@@ -62,6 +62,32 @@ module Sndacs
       true
     end
 
+    # Set bucket policy for the given bucket
+    def put_bucket_policy(bucket_policy)
+        if bucket_policy && bucket_policy.is_a?(String) && bucket_policy.strip != ''
+             bucket_request(:put,:body => bucket_policy,:subresource=>"policy")
+             true
+        else  
+            false
+        end
+    end
+    
+    # Delete the policy of the given bucket
+    # exception if the bucket do not have a bucket policy 
+    def delete_bucket_policy()
+        bucket_request(:delete,:subresource=>"policy")
+        true
+    end
+
+    # Get the bucket policy of the given bucket
+    # exception if the bucket do not have a bucket policy
+    def get_bucket_policy()
+        response = bucket_request(:get,:subresource=>"policy")
+        #puts response.body
+        response.body
+    end
+
+
     # Destroys given bucket. Raises an Sndacs::Error::BucketNotEmpty
     # exception if the bucket is not empty.
     # You can destroy non-empty bucket passing true (to force destroy)
