@@ -60,6 +60,21 @@ create a bucket to specify location,location can be 'huadong-1' or 'huabei-1' ,d
     
     first_bucket.location
 
+==== Set bucket policy
+     
+set bucket public 
+     bucket_policy = '{"Id":"b32c9be8-2414-d0ed-a19f-e0b3f37db5fc","Statement":[{"Sid":"public-get-object","Effect":"Allow","Action":"storage:GetObject","Resource":"srn:snda:storage:::'+first_bucket.name+'/*"}]}'
+     first_bucket.put_bucket_policy(bucket_policy)
+ 
+
+==== Get bucket policy
+
+     bucket_policy = first_bucket.get_bucket_policy
+
+==== Delete bucket policy
+
+     first_bucket.delete_bucket_policy
+
 === List objects in a bucket
 
     first_bucket.objects
