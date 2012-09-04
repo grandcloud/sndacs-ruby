@@ -101,6 +101,12 @@ set bucket public
 Get a temporary url to the object that expires on the timestamp given.Defaults to 1hour expire time
     object.temporary_url( Time.now + 60 )
 
+=== Get url to an public accessible object
+
+Get a url to an public accessible object,the url only work when the object is public accessible
+    
+     object.url( public_accessible = true)
+   
 === Delete an object
 
     object.destroy
