@@ -100,9 +100,11 @@ module Sndacs
     end
 
     # Returns Object's URL using protocol specified in service,
+    # Return url public reachable when the object is public accessible and public_accessible is true 
+    # public_accessible given.Default to false
     # e.g. <tt>http://storage.grandcloud.cn/bucket/key/file.extension</tt>
-    def url
-      URI.escape("#{protocol}#{host}/#{path_prefix}#{key}")
+    def url(public_accessible = false)
+      URI.escape("#{protocol}#{host(public_accessible)}/#{path_prefix}#{key}")
     end
 
     # Returns Object's CNAME URL (without <tt>storage.grandcloud.cn</tt>
@@ -152,28 +154,20 @@ module Sndacs
 
       headers = {}
 
-      headers[:x_snda_acl] = options[:acl] || acl || "public-read"
+      #headers[:x_snda_acl] = options[:acl] || acl || "public-read"
       headers[:content_type] = options[:content_type] || content_type || "application/octet-stream"
       headers[:content_encoding] = options[:content_encoding] if options[:content_encoding]
       headers[:content_disposition] = options[:content_disposition] if options[:content_disposition]
       headers[:cache_control] = options[:cache_control] if options[:cache_control]
-      headers[:x_snda_copy_source] = full_key
+      headers[:x_snda_copy_source] = [bucket,key].join("/")
       headers[:x_snda_metadata_directive] = options[:replace] == false ? "COPY" : "REPLACE"
       headers[:x_snda_copy_source_if_match] = options[:if_match] if options[:if_match]
       headers[:x_snda_copy_source_if_none_match] = options[:if_none_match] if options[:if_none_match]
       headers[:x_snda_copy_source_if_unmodified_since] = options[:if_modified_since] if options[:if_modified_since]
       headers[:x_snda_copy_source_if_modified_since] = options[:if_unmodified_since] if options[:if_unmodified_since]
-
-      response = bucket.send(:bucket_request, :put, :path => key, :headers => headers)
-      object_attributes = parse_copy_object_result(response.body)
-
-      object = Object.send(:new, bucket, object_attributes.merge(:key => key, :size => size))
-      object.acl = response["x-snda-acl"]
-      object.content_type = response["content-type"]
-      object.content_encoding = response["content-encoding"]
-      object.content_disposition = response["content-disposition"]
-      object.cache_control = response["cache-control"]
-      object
+      
+      response = object_request(:put,:headers => headers)
+      response.body
     end
 
     def get_object(options = {})
