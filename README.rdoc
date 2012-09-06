@@ -122,6 +122,32 @@ Get a url to a public accessible object,the url only work when the object is pub
     new_object.save
     #=> true
 
+create an object with metadata
+    one_object = bucket.objects.build("put_object_test.txt")
+    => #<Sndacs::Object:/beijing/put_object_test.txt>
+    one_object.content="labulabu"
+    one_object.save("x-snda-meta-mydata1"=>1,"x-snda-meta-mydata2"=>"mydata")
+    => true
+    one_object.content_type
+    => "text/plain"
+    one_object.metadata
+    => [["x-snda-meta-mydata1", ["1"]], ["x-snda-meta-mydata2", ["mydata"]]]
+
+=== Create an object by copy
+
+    one_object  # use object created above
+    => #<Sndacs::Object:/beijing/put_object_test.txt>
+    dest_bucket = service.buckets.find(dbucket_name)
+    dest_object = dest_bucket.objects.build(dobject_name)
+    dest_object.copy(:bucket=>one_object.bucket.name,:key=>one_object.key,:if_none_match=>'"6372c977391b20d2887e2d7c46c079bf0"',:replace=>false,"x-snda-meta-testcopy"=>"hicopy")
+    => true
+    dest_object.metadata
+    => [["x-snda-meta-mydata1", ["1"]], ["x-snda-meta-mydata2", ["mydata"]]]
+    dest_object.content_type
+    => "text/plain"
+    dest_object.etag
+    => "6fafe919441e179042702236e3c56b5d"
+
 Please note that new objects are created with "private" ACL by
 default.
 
