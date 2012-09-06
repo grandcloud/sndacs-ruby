@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sndacs (0.2.2)
+    sndacs (0.2.3)
       proxies (~> 0.2.0)
 
 GEM

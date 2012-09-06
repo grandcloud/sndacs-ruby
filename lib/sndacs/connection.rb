@@ -149,7 +149,7 @@ module Sndacs
                           :x_snda_copy_source_if_none_match,
                           :x_snda_copy_source_if_unmodified_since,
                           :x_snda_copy_source_if_modified_since]
-
+      user_meta_data_prefix = "x-snda-meta-"
       parsed_headers = {}
       if headers
         headers.each do |key, value|
@@ -163,6 +163,12 @@ module Sndacs
             end
 
             parsed_headers[parsed_key] = parsed_value
+          else
+              parsed_key = key.to_s.gsub("_","-")
+              if parsed_key[0,user_meta_data_prefix.length] === user_meta_data_prefix
+                 parsed_headers[parsed_key] = value
+              end
+            
           end
         end
       end

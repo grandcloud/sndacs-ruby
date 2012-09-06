@@ -72,24 +72,25 @@ module Sndacs
     end
 
     # Saves the object, returns true if successfull.
-    def save
-      put_object
+    # ==== Options
+    # request headers
 
+    def save(options = {})
+      put_object(options)
       true
     end
 
-    # Copies the file to another key and/or bucket.
+    # copies the file from another key and/or bucket.
     #
     # ==== Options
-    # * <tt>:key</tt> - New key to store object in
-    # * <tt>:bucket</tt> - New bucket to store object in (instance of
-    #   Sndacs::Bucket)
-    # * <tt>:acl</tt> - ACL of the copied object (default:
-    #   "public-read")
-    # * <tt>:content_type</tt> - Content type of the copied object
-    #   (default: "application/octet-stream")
+    # * <tt>:key</tt> - key for copy
+    # * <tt>:bucket</tt> - bucket's name which the source file stored
+    # * <tt>:x_snda_metadata..</tt> - params for copy which is not nessary
+    #  
     def copy(options = {})
       copy_object(options)
+      retrieve
+      true
     end
 
     # Destroys the file on the server
@@ -155,7 +156,7 @@ module Sndacs
       headers = {}
 
       #headers[:x_snda_acl] = options[:acl] || acl || "public-read"
-      headers[:content_type] = options[:content_type] || content_type || "application/octet-stream"
+      headers[:content_type] = options[:content_type] || content_type || content_type_for_key
       headers[:content_encoding] = options[:content_encoding] if options[:content_encoding]
       headers[:content_disposition] = options[:content_disposition] if options[:content_disposition]
       headers[:cache_control] = options[:cache_control] if options[:cache_control]
@@ -165,9 +166,10 @@ module Sndacs
       headers[:x_snda_copy_source_if_none_match] = options[:if_none_match] if options[:if_none_match]
       headers[:x_snda_copy_source_if_unmodified_since] = options[:if_modified_since] if options[:if_modified_since]
       headers[:x_snda_copy_source_if_modified_since] = options[:if_unmodified_since] if options[:if_unmodified_since]
-      
+      headers = merge_usermetadata_toheader(options,headers)    
       response = object_request(:put,:headers => headers)
-      response.body
+      #response.body
+      #true
     end
 
     def get_object(options = {})
@@ -188,10 +190,11 @@ module Sndacs
       end
     end
 
-    def put_object
-      response = object_request(:put, :body => content, :headers => dump_headers)
+    def put_object(options={})
+      response = object_request(:put, :body => content, :headers => dump_headers(options))
 
       parse_headers(response)
+      retrieve
     end
 
     def delete_object(options = {})
@@ -227,17 +230,37 @@ module Sndacs
       end
     end
 
-    def dump_headers
-      headers = {}
-      headers[:x_snda_acl] = @acl || "public-read"
-      headers[:x_snda_storage_class] = @storage_class || "STANDARD"
-      headers[:content_type] = @content_type || "application/octet-stream"
-      headers[:content_encoding] = @content_encoding if @content_encoding
-      headers[:content_disposition] = @content_disposition if @content_disposition
-      headers[:cache_control] = @cache_control if @cache_control
-      headers
+    def content_type_for_key
+         if mime_type = MIME::Types.type_for(key).first
+            mime_type.content_type
+         else
+            "application/octet-stream"
+         end
     end
 
+    def dump_headers(options={})
+      headers = {}
+      #headers[:x_snda_acl] = @acl || "public-read"
+      #headers[:x_snda_storage_class] = @storage_class || "STANDARD"
+      headers[:content_type] = options[:content_type] || @content_type || content_type_for_key
+      headers[:content_encoding] = options[:content_encoding] || @content_encoding if @content_encoding
+      headers[:content_disposition] = options[:content_disposition] || @content_disposition if @content_disposition
+      headers[:cache_control] = options[:cache_control] || @cache_control if @cache_control
+      headers = merge_usermetadata_toheader(options,headers)
+      headers
+    end
+    
+    def merge_usermetadata_toheader(options,headers)
+        user_meta_data_prefix = "x-snda-meta-"
+        options.each do |key,value|
+          parse_key = key.to_s.gsub("_","-").downcase
+          if parse_key[0,user_meta_data_prefix.length] === user_meta_data_prefix
+              headers[parse_key] = value 
+          end
+        end
+        headers
+    end
+ 
     def parse_headers(response)
       @metadata = response.to_hash.select { |k, v| k.to_s.start_with?("x-snda-meta") }
       self.etag = response["etag"] if response.key?("etag")

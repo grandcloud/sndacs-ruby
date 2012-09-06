@@ -10,6 +10,7 @@ require "net/https"
 require "openssl"
 require "rexml/document"
 require "time"
+require "mime/types"
 
 require "proxies"
 require "sndacs/objects_extension"
