@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    sndacs (0.2.3)
+    sndacs (0.2.4)
+      mime-types
       proxies (~> 0.2.0)
 
 GEM
@@ -9,6 +10,7 @@ GEM
   specs:
     diff-lcs (1.1.3)
     metaclass (0.0.1)
+    mime-types (1.18)
     mocha (0.10.5)
       metaclass (~> 0.0.1)
     proxies (0.2.1)
